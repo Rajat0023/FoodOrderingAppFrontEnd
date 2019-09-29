@@ -28,19 +28,20 @@ import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Paper from "@material-ui/core/Paper";
-import { CardHeader } from "@material-ui/core";
+import { CardHeader, AppBar } from "@material-ui/core";
 import { blue } from '@material-ui/core/colors';
 
 
 
 
 
-
+//injecting below custom props, to one of the properties of component.
 const styles = theme => ({
     root: {
         width: '80%',
         flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+
+        backgroundColor: theme.palette.background.paper,
       },
       button: {
         marginTop: theme.spacing(1),
@@ -51,7 +52,8 @@ const styles = theme => ({
       },
       resetContainer: {
         padding: theme.spacing(3),
-      }
+      },
+
   });
 
 
@@ -65,13 +67,18 @@ super();
 //declare and initialize state variables here
 this.state={
     tabList:  ['Delivery', 'Payment'],
-    address:""
+    address:"",
+    value:0
 };
 
 
 }
 
 //manage event handlers and other functions here
+
+tabChangeHandler=(event,value)=>{
+this.setState({value:value});
+}
 
 
   getStepContent=(step)=> {
@@ -125,14 +132,26 @@ return (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <br/>
-            <div /* className={classes.root} */ style={{backgroundColor:"blue",marginLeft:"30px"}}>
-               <Tabs aria-label="simple tabs example" >
-                   <Tab label="EXISTING ADDRESS" style={{color:"white"}} />
-                   <Tab label="NEW ADDRESS" style={{color:"white"}} />
+
+
+            {/* display below only for delivery step */}
+
+            <div  style={{marginLeft:"30px"}}>
+              <AppBar position="static">
+               <Tabs value={this.state.value} onChange={this.tabChangeHandler}>
+
+                   <Tab value={this.state.activeTab}label="EXISTING ADDRESS"/>
+                   <Tab value={this.state.activeTab}label="NEW ADDRESS"/>
                </Tabs>
+               </AppBar>
             </div>
+
+
             <StepContent>
               {/* <Typography>{this.getStepContent(index)}</Typography> */}
+
+
+
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -148,6 +167,9 @@ return (
                   </Button>
                 </div>
               </div>
+
+
+
             </StepContent>
           </Step>
         ))}
