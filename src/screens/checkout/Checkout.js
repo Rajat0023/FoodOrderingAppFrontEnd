@@ -38,6 +38,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
+
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
@@ -69,6 +70,11 @@ const styles = theme => ({
       formControl: {
         margin: theme.spacing(3),
       },
+      container: {
+        display: 'flex',
+        flexDirection:"column",
+        flexWrap: 'wrap',
+      }
 
   });
 
@@ -94,6 +100,7 @@ this.state={
 //manage event handlers and other functions here
 
 tabChangeHandler=(event,value)=>{
+
 this.setState({value:value});
 }
 
@@ -131,14 +138,14 @@ return (
               <AppBar position="static">
                <Tabs value={this.state.value} onChange={this.tabChangeHandler}>
 
-                   <Tab value={this.state.activeTab}label="EXISTING ADDRESS"/>
-                   <Tab value={this.state.activeTab}label="NEW ADDRESS"/>
+                   <Tab label="EXISTING ADDRESS"/>
+                   <Tab label="NEW ADDRESS"/>
                </Tabs>
                </AppBar>
             </div>
     ):
     (
-        <span></span>
+     null
     )
     }
 
@@ -146,7 +153,7 @@ return (
               {/* <Typography>{this.getStepContent(index)}</Typography> */}
 {
     
-    this.state.activeStep===0 ? (
+    this.state.activeStep===0 && label==="Delivery" && this.state.value===0 ? (
                   <div>
 <GridList className={classes.gridList} cols={3}>
 {
@@ -179,7 +186,11 @@ return (
               </div>
               </div>
               ):
-              (<div>
+              (null)}
+
+              {
+                this.state.activeStep===1 ? (  
+              <div>
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormLabel component="legend">Select mode of Payment</FormLabel>
                   <RadioGroup aria-label="" name="" /* value={value} */ /* onChange={handleChange} */>
@@ -206,10 +217,45 @@ return (
                         FINISH
                     </Button>
                 </div>
-                </div>)  
-} 
+                </div> 
+                ) :(null)
+              }
+
+
+
+ {/* form for new address */}
+
+
+
+{
+    this.state.activeStep===0 && this.state.value===1 ? (
+<form className={classes.container}>
+<TextField  label="Flat/Building No"/><br/>
+<TextField label="Locality"/><br/>
+<TextField label="City"/><br/>
+
+
+
+<TextField label="Pincode"/>
+
+</form>
+
+    ): (<span/>)
+}       
+
+
+
+
+
             </StepContent>
-             
+
+
+
+
+
+
+
+
 
 }
           </Step>
