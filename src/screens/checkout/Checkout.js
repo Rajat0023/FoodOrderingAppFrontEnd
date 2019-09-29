@@ -29,7 +29,12 @@ import IconButton from "@material-ui/core/IconButton";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Paper from "@material-ui/core/Paper";
 import { CardHeader, AppBar, GridListTile } from "@material-ui/core";
-import { blue } from '@material-ui/core/colors';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 
 
 
@@ -58,6 +63,9 @@ const styles = theme => ({
       resetContainer: {
         padding: theme.spacing(3),
       },
+      formControl: {
+        margin: theme.spacing(3),
+      },
 
   });
 
@@ -73,7 +81,8 @@ super();
 this.state={
     tabList:  ['Delivery', 'Payment'],
     address:['My address1','My address2','My address3','My address4','My address5'],
-    value:0
+    value:0,
+    activeStep:0,
 };
 
 
@@ -85,6 +94,12 @@ tabChangeHandler=(event,value)=>{
 this.setState({value:value});
 }
 
+handledNextStep=(event)=>{
+    this.setState({
+      activeStep:this.state.activeStep +1
+    });
+}
+
 render(){
     const { classes } = this.props;
 
@@ -94,7 +109,7 @@ return (
 <header>header component to be reused here</header>
 <br/>
 <div className={classes.root}>
-      <Stepper  orientation="vertical">
+      <Stepper  activeStep={this.state.activeStep} orientation="vertical">
         {this.state.tabList.map((label, index) => (
 
           <Step key={label}>
@@ -103,7 +118,8 @@ return (
 
 
 {
-    index=== 0  ? (
+    
+    this.state.activeStep=== 0 && label==="Delivery"  ? (
              <div  style={{marginLeft:"30px"}}>
               <AppBar position="static">
                <Tabs value={this.state.value} onChange={this.tabChangeHandler}>
@@ -122,7 +138,8 @@ return (
             <StepContent>
               {/* <Typography>{this.getStepContent(index)}</Typography> */}
 {
-              index=== 0  ? (
+    
+    this.state.activeStep===0 ? (
                   <div>
 <GridList className={classes.gridList} cols={3}>
 {
@@ -143,6 +160,7 @@ return (
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    onClick={this.handledNextStep}
                   >
                       NEXT
                   </Button>
@@ -150,7 +168,34 @@ return (
               </div>
               </div>
               ):
-              (<span></span>)  
+              (<div>
+                <FormControl component="fieldset" className={classes.formControl}>
+                  <FormLabel component="legend">Select mode of Payment</FormLabel>
+                  <RadioGroup aria-label="" name="" /* value={value} */ /* onChange={handleChange} */>
+                    <FormControlLabel value="cashOnDelivery" control={<Radio />} label="Cash on Delivery" />
+                    <FormControlLabel value="wallet" control={<Radio />} label="Wallet" />
+                    <FormControlLabel value="netBanking" control={<Radio />} label="Net Banking" />
+                    <FormControlLabel value="debit/CreditCard" control={<Radio />} label="Debit/Credit Card" />
+                    <FormControlLabel
+                      value="disabled"
+                      disabled
+                      control={<Radio />}
+                      label="(Disabled option)"
+                    />
+                  </RadioGroup>
+                </FormControl>
+                <div>
+                    <Button  className={classes.button}>
+                        BACK
+                    </Button>
+
+                    <Button variant="contained"
+                    color="primary"
+                    className={classes.button}>
+                        FINISH
+                    </Button>
+                </div>
+                </div>)  
 } 
             </StepContent>
              
