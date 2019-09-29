@@ -1,3 +1,5 @@
+
+  
 import React,{Component} from 'react';
 import "./Checkout.css";
 //import "../checkout/Checkout.css";
@@ -36,6 +38,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
 
@@ -99,6 +102,10 @@ handledNextStep=(event)=>{
       activeStep:this.state.activeStep +1
     });
 }
+handleGridCheck=(e)=>{
+    e.target.style.color="green";
+}
+
 
 render(){
     const { classes } = this.props;
@@ -146,7 +153,11 @@ return (
     this.state.address.map(add =>(
 <GridListTile key={add}>
 <h>{add}</h>
+<IconButton>
+    <CheckCircleIcon onClick={this.handleGridCheck}/>
+</IconButton>
 </GridListTile>
+
 ))
 }
 </GridList>
