@@ -28,7 +28,7 @@ import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Paper from "@material-ui/core/Paper";
-import { CardHeader, AppBar } from "@material-ui/core";
+import { CardHeader, AppBar, GridListTile } from "@material-ui/core";
 import { blue } from '@material-ui/core/colors';
 
 
@@ -38,10 +38,15 @@ import { blue } from '@material-ui/core/colors';
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
     root: {
-        width: '80%',
+        width: '75%',
         flexGrow: 1,
 
         backgroundColor: theme.palette.background.paper,
+      },
+      gridList: {
+        flexWrap: 'nowrap',
+        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+        transform: 'translateZ(0)',
       },
       button: {
         marginTop: theme.spacing(1),
@@ -67,7 +72,7 @@ super();
 //declare and initialize state variables here
 this.state={
     tabList:  ['Delivery', 'Payment'],
-    address:"",
+    address:['My address1','My address2','My address3','My address4','My address5'],
     value:0
 };
 
@@ -80,44 +85,6 @@ tabChangeHandler=(event,value)=>{
 this.setState({value:value});
 }
 
-
-  getStepContent=(step)=> {
-    switch (step) {
-      case 0:
-        this.setState({
-         address:   `For each ad campaign that you create, you can control how much
-         you're willing to spend on clicks and conversions, which networks
-         and geographical locations you want your ads to show on, and more.`
-        }) ;
-      case 1:
-        this.setState({
-            address:   `For each ad campaign that you create, you can control how much`
-           }) ;
-      case 2:
-        this.setState({
-            address:   `My name is Harshal.`
-           }) ;
-      default:
-        this.setState({
-            address:   `This is my address.`
-           }) ;
-    }
-  }
-
-
-
-  /* handleNext = ( ) => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
-
-  handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
-
-  handleReset = () => {
-    setActiveStep(0);
-  }; */
-
 render(){
     const { classes } = this.props;
 
@@ -129,14 +96,15 @@ return (
 <div className={classes.root}>
       <Stepper  orientation="vertical">
         {this.state.tabList.map((label, index) => (
+
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <br/>
 
 
-            {/* display below only for delivery step */}
-
-            <div  style={{marginLeft:"30px"}}>
+{
+    index=== 0  ? (
+             <div  style={{marginLeft:"30px"}}>
               <AppBar position="static">
                <Tabs value={this.state.value} onChange={this.tabChangeHandler}>
 
@@ -145,13 +113,26 @@ return (
                </Tabs>
                </AppBar>
             </div>
-
+    ):
+    (
+        <span></span>
+    )
+    }
 
             <StepContent>
               {/* <Typography>{this.getStepContent(index)}</Typography> */}
-
-
-
+{
+              index=== 0  ? (
+                  <div>
+<GridList className={classes.gridList} cols={3}>
+{
+    this.state.address.map(add =>(
+<GridListTile key={add}>
+<h>{add}</h>
+</GridListTile>
+))
+}
+</GridList>
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -167,10 +148,14 @@ return (
                   </Button>
                 </div>
               </div>
-
-
-
+              </div>
+              ):
+              (<span></span>)  
+} 
             </StepContent>
+             
+
+}
           </Step>
         ))}
       </Stepper>
