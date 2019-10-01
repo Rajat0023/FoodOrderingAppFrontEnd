@@ -74,6 +74,10 @@ const styles = theme => ({
         display: 'flex',
         flexDirection:"column",
         flexWrap: 'wrap',
+      },
+      cardTitle: {
+        fontSize: 14,
+        width: '25%',
       }
 
   });
@@ -123,6 +127,7 @@ return (
 <header>header component to be reused here</header>
 <br/>
 <div className={classes.root}>
+  <span>
       <Stepper  activeStep={this.state.activeStep} orientation="vertical">
         {this.state.tabList.map((label, index) => (
 
@@ -240,27 +245,39 @@ return (
 
 </form>
 
-    ): (<span/>)
+    ): (null)
 }       
 
 
 
-
-
-            </StepContent>
-
-
-
-
-
-
-
-
-
+</StepContent>
 }
           </Step>
         ))}
       </Stepper>
+      </span>
+
+
+
+
+
+        <span>
+          <div>
+<Card className= {classes.cardTitle} >
+<CardContent>
+<Typography className= {classes.cardTitle} color="textSecondary" gutterBottom>
+Summary
+</Typography>
+</CardContent>
+</Card>
+</div>
+</span>
+
+
+
+
+
+
     </div>
     </div>
 
