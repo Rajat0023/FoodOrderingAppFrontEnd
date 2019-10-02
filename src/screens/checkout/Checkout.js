@@ -37,8 +37,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-
-
+import { shadows } from '@material-ui/system';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 
@@ -47,8 +46,8 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
     root: {
-        width: '75%',
-        flexGrow: 1,
+        width: '100%',
+        //flexGrow: 1,
 
         backgroundColor: theme.palette.background.paper,
       },
@@ -56,10 +55,17 @@ const styles = theme => ({
         flexWrap: 'nowrap',
         // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
         transform: 'translateZ(0)',
+      
       },
+    
       button: {
         marginTop: theme.spacing(1),
         marginRight: theme.spacing(1),
+      },
+      button1: {
+        marginTop: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width:'100%',
       },
       actionsContainer: {
         marginBottom: theme.spacing(2),
@@ -77,7 +83,9 @@ const styles = theme => ({
       },
       cardTitle: {
         fontSize: 14,
-        width: '25%',
+        width: '90%',
+        
+        
       }
 
   });
@@ -126,8 +134,10 @@ return (
 <div>
 <header>header component to be reused here</header>
 <br/>
-<div className={classes.root}>
-  <span>
+<GridList className={classes.gridList} cols={2}>
+  <GridListTile style={{width:'70%', height:'100%'}}>
+{/* <div className={classes.root}> */}
+  
       <Stepper  activeStep={this.state.activeStep} orientation="vertical">
         {this.state.tabList.map((label, index) => (
 
@@ -255,30 +265,61 @@ return (
           </Step>
         ))}
       </Stepper>
-      </span>
+      {/* </div> */}
+      </GridListTile>
 
 
 
 
 
-        <span>
-          <div>
+
+
+
+      
+<GridListTile style={{width:'30%',height:'100%'}}>     
 <Card className= {classes.cardTitle} >
+
 <CardContent>
+
+  <Typography style={{fontSize:'20',color:'black'}}>
+  Summary
+  </Typography>
+
+  <br/>
+
 <Typography className= {classes.cardTitle} color="textSecondary" gutterBottom>
-Summary
+Loud Silence
+<br/> <br/>
+item 1 details
+<br/>
+item 2 details
 </Typography>
+
+
+<br/>
+<Divider/>
+<br/>
+
+<Typography>
+  Total amount details
+</Typography>
+
+<br/>
+<Button variant="contained"
+                    color="primary"
+                    className={classes.button1}>
+                        PLACE ORDER
+                    </Button>
+
+                    
 </CardContent>
+
 </Card>
-</div>
-</span>
+</GridListTile>
+ 
 
 
-
-
-
-
-    </div>
+</GridList>
     </div>
 
 
