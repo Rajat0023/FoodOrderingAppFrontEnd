@@ -1,16 +1,14 @@
-
-  
-import React,{Component} from 'react';
+import React, { Component } from "react";
 import "./Checkout.css";
 //import "../checkout/Checkout.css";
 import { withStyles } from "@material-ui/core/styles";
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import StepContent from "@material-ui/core/StepContent";
 import GridList from "@material-ui/core/GridList";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -31,302 +29,330 @@ import IconButton from "@material-ui/core/IconButton";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Paper from "@material-ui/core/Paper";
 import { CardHeader, AppBar, GridListTile } from "@material-ui/core";
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import { shadows } from '@material-ui/system';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-
-
-
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import Select from "@material-ui/core/Select";
 
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
-    root: {
-        width: '100%',
-        //flexGrow: 1,
+  root: {
+    width: "100%",
+    //flexGrow: 1,
 
-        backgroundColor: theme.palette.background.paper,
-      },
-      gridList: {
-        flexWrap: 'nowrap',
-        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-        transform: 'translateZ(0)',
-      
-      },
-    
-      button: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-      },
-      button1: {
-        marginTop: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        width:'100%',
-      },
-      actionsContainer: {
-        marginBottom: theme.spacing(2),
-      },
-      resetContainer: {
-        padding: theme.spacing(3),
-      },
-      formControl: {
-        margin: theme.spacing(3),
-      },
-      container: {
-        display: 'flex',
-        flexDirection:"column",
-        flexWrap: 'wrap',
-      },
-      cardTitle: {
-        fontSize: 14,
-        width: '90%',
-        
-        
-      }
+    backgroundColor: theme.palette.background.paper
+  },
+  gridList: {
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)"
+  },
 
-  });
+  button: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1)
+  },
+  button1: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: "100%"
+  },
+  actionsContainer: {
+    marginBottom: theme.spacing(2)
+  },
+  resetContainer: {
+    padding: theme.spacing(3)
+  },
+  formControl: {
+    margin: theme.spacing(3)
+  },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap"
+  },
+  cardTitle: {
+    fontSize: 14,
+    width: "90%"
+  }
+});
 
+class Checkout extends Component {
+  constructor() {
+    super();
 
+    //declare and initialize state variables here
+    this.state = {
+      tabList: ["Delivery", "Payment"],
+      address: [
+        "My address1",
+        "My address2",
+        "My address3",
+        "My address4",
+        "My address5"
+      ],
+      states: ["Maharashtra", "Karnataka", "Bihar", "Kerala"],
+      value: 0,
+      activeStep: 0,
+      finishSignal: 0
+    };
+  }
 
+  //manage event handlers and other functions here
 
+  tabChangeHandler = (event, value) => {
+    this.setState({ value: value });
+  };
 
-class Checkout extends Component{
-constructor(){
-super();
-
-//declare and initialize state variables here
-this.state={
-    tabList:  ['Delivery', 'Payment'],
-    address:['My address1','My address2','My address3','My address4','My address5'],
-    value:0,
-    activeStep:0,
-};
-
-
-}
-
-//manage event handlers and other functions here
-
-tabChangeHandler=(event,value)=>{
-
-this.setState({value:value});
-}
-
-handledNextStep=(event)=>{
+  //
+  handledNextStep = event => {
     this.setState({
-      activeStep:this.state.activeStep +1
+      activeStep: this.state.activeStep + 1
     });
-}
-handleGridCheck=(e)=>{
-    e.target.style.color="green";
-}
+  };
 
+  //
+  handleFinish = event => {
+    this.setState({
+      finishSignal: this.state.finishSignal + 1
+    });
+  };
+  //
+  handleChangeAfterFinish = event => {
+    this.setState({
+      activeStep: 0,
+      finishSignal: 0
+    });
+  };
 
-render(){
+  handleGridCheck = e => {
+    e.target.style.color = "green";
+  };
+
+  render() {
     const { classes } = this.props;
 
-  
-return (
-<div>
-<header>header component to be reused here</header>
-<br/>
-<GridList className={classes.gridList} cols={2}>
-  <GridListTile style={{width:'70%', height:'100%'}}>
-{/* <div className={classes.root}> */}
-  
-      <Stepper  activeStep={this.state.activeStep} orientation="vertical">
-        {this.state.tabList.map((label, index) => (
+    return (
+      <div>
+        <header>header component to be reused here</header>
+        <br />
+        <GridList className={classes.gridList} cols={2}>
+          <GridListTile style={{ width: "70%", height: "100%" }}>
+            {/* <div className={classes.root}> */}
 
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-            <br/>
+            <Stepper activeStep={this.state.activeStep} orientation="vertical">
+              {this.state.tabList.map((label, index) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                  <br />
+                  {this.state.activeStep === 0 && label === "Delivery" ? (
+                    <div style={{ marginLeft: "30px" }}>
+                      <AppBar position="static">
+                        <Tabs
+                          value={this.state.value}
+                          onChange={this.tabChangeHandler}
+                        >
+                          <Tab label="EXISTING ADDRESS" />
+                          <Tab label="NEW ADDRESS" />
+                        </Tabs>
+                      </AppBar>
+                    </div>
+                  ) : null}
+                  <StepContent>
+                    {/* <Typography>{this.getStepContent(index)}</Typography> */}
+                    {this.state.activeStep === 0 &&
+                    label === "Delivery" &&
+                    this.state.value === 0 ? (
+                      <div>
+                        <GridList className={classes.gridList} cols={3}>
+                          {this.state.address.map(add => (
+                            <GridListTile key={add}>
+                              <h>{add}</h>
+                              <IconButton>
+                                <CheckCircleIcon
+                                  onClick={this.handleGridCheck}
+                                />
+                              </IconButton>
+                            </GridListTile>
+                          ))}
+                        </GridList>
+                        <div className={classes.actionsContainer}>
+                          <div>
+                            <Button
+                              variant="contained"
+                              disabled
+                              color="secondary"
+                              className={classes.button}
+                            >
+                              BACK
+                            </Button>
 
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              className={classes.button}
+                              onClick={this.handledNextStep}
+                            >
+                              NEXT
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
 
-{
-    
-    this.state.activeStep=== 0 && label==="Delivery"  ? (
-             <div  style={{marginLeft:"30px"}}>
-              <AppBar position="static">
-               <Tabs value={this.state.value} onChange={this.tabChangeHandler}>
+                    {this.state.activeStep === 1 ? (
+                      <div>
+                        <FormControl
+                          component="fieldset"
+                          className={classes.formControl}
+                        >
+                          <FormLabel component="legend">
+                            Select mode of Payment
+                          </FormLabel>
+                          <RadioGroup
+                            aria-label=""
+                            name="" /* value={value} */ /* onChange={handleChange} */
+                          >
+                            <FormControlLabel
+                              value="cashOnDelivery"
+                              control={<Radio />}
+                              label="Cash on Delivery"
+                            />
+                            <FormControlLabel
+                              value="wallet"
+                              control={<Radio />}
+                              label="Wallet"
+                            />
+                            <FormControlLabel
+                              value="netBanking"
+                              control={<Radio />}
+                              label="Net Banking"
+                            />
+                            <FormControlLabel
+                              value="debit/CreditCard"
+                              control={<Radio />}
+                              label="Debit/Credit Card"
+                            />
+                            <FormControlLabel
+                              value="disabled"
+                              disabled
+                              control={<Radio />}
+                              label="(Disabled option)"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+                        <div>
+                          <Button
+                            className={classes.button}
+                            onClick={this.handleChangeAfterFinish}
+                          >
+                            BACK
+                          </Button>
 
-                   <Tab label="EXISTING ADDRESS"/>
-                   <Tab label="NEW ADDRESS"/>
-               </Tabs>
-               </AppBar>
-            </div>
-    ):
-    (
-     null
-    )
-    }
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={this.handleFinish}
+                          >
+                            FINISH
+                          </Button>
+                        </div>
+                      </div>
+                    ) : null}
 
-            <StepContent>
-              {/* <Typography>{this.getStepContent(index)}</Typography> */}
-{
-    
-    this.state.activeStep===0 && label==="Delivery" && this.state.value===0 ? (
-                  <div>
-<GridList className={classes.gridList} cols={3}>
-{
-    this.state.address.map(add =>(
-<GridListTile key={add}>
-<h>{add}</h>
-<IconButton>
-    <CheckCircleIcon onClick={this.handleGridCheck}/>
-</IconButton>
-</GridListTile>
+                    {/* form for new address */}
 
-))
-}
-</GridList>
-              <div className={classes.actionsContainer}>
-                <div>
-                  <Button
-                    className={classes.button}>
-                    BACK
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    onClick={this.handledNextStep}
-                  >
-                      NEXT
-                  </Button>
-                </div>
-              </div>
-              </div>
-              ):
-              (null)}
+                    {this.state.activeStep === 0 && this.state.value === 1 ? (
+                      <form className={classes.container}>
+                        <FormControl>
+                          <TextField label="Flat/Building No" />
+                        </FormControl>
+                        <br />
+                        <FormControl>
+                          <TextField label="Locality" />
+                        </FormControl>
+                        <br />
+                        <FormControl>
+                          <TextField label="City" />
+                        </FormControl>
+                        <br />
+                        <FormControl>
+                          <InputLabel htmlFor="">State</InputLabel>
+                          <Select>
+                            {this.state.states.map(state => (
+                              <MenuItem>{state}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
 
-              {
-                this.state.activeStep===1 ? (  
-              <div>
-                <FormControl component="fieldset" className={classes.formControl}>
-                  <FormLabel component="legend">Select mode of Payment</FormLabel>
-                  <RadioGroup aria-label="" name="" /* value={value} */ /* onChange={handleChange} */>
-                    <FormControlLabel value="cashOnDelivery" control={<Radio />} label="Cash on Delivery" />
-                    <FormControlLabel value="wallet" control={<Radio />} label="Wallet" />
-                    <FormControlLabel value="netBanking" control={<Radio />} label="Net Banking" />
-                    <FormControlLabel value="debit/CreditCard" control={<Radio />} label="Debit/Credit Card" />
-                    <FormControlLabel
-                      value="disabled"
-                      disabled
-                      control={<Radio />}
-                      label="(Disabled option)"
-                    />
-                  </RadioGroup>
-                </FormControl>
-                <div>
-                    <Button  className={classes.button}>
-                        BACK
-                    </Button>
+                        <br />
+                        
+                        <FormControl>
+                          <TextField label="Pincode" />
+                        </FormControl>
+                      </form>
+                    ) : null}
+                  </StepContent>
+                  }
+                </Step>
+              ))}
+            </Stepper>
 
-                    <Button variant="contained"
-                    color="primary"
-                    className={classes.button}>
-                        FINISH
-                    </Button>
-                </div>
-                </div> 
-                ) :(null)
-              }
+            {this.state.finishSignal == 1 ? (
+              <Typography>
+                View the summary & place your oder now!
+                <br />
+                <Button onClick={this.handleChangeAfterFinish}>CHANGE</Button>
+              </Typography>
+            ) : null}
+          </GridListTile>
 
+          <GridListTile style={{ width: "30%", height: "100%" }}>
+            <Card className={classes.cardTitle}>
+              <CardContent>
+                <Typography style={{ fontSize: "20", color: "black" }}>
+                  Summary
+                </Typography>
 
+                <br />
 
- {/* form for new address */}
+                <Typography
+                  className={classes.cardTitle}
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  Loud Silence
+                  <br /> <br />
+                  item 1 details
+                  <br />
+                  item 2 details
+                </Typography>
 
+                <br />
+                <Divider />
+                <br />
 
+                <Typography>Total amount details</Typography>
 
-{
-    this.state.activeStep===0 && this.state.value===1 ? (
-<form className={classes.container}>
-<TextField  label="Flat/Building No"/><br/>
-<TextField label="Locality"/><br/>
-<TextField label="City"/><br/>
-
-
-
-<TextField label="Pincode"/>
-
-</form>
-
-    ): (null)
-}       
-
-
-
-</StepContent>
-}
-          </Step>
-        ))}
-      </Stepper>
-      {/* </div> */}
-      </GridListTile>
-
-
-
-
-
-
-
-
-      
-<GridListTile style={{width:'30%',height:'100%'}}>     
-<Card className= {classes.cardTitle} >
-
-<CardContent>
-
-  <Typography style={{fontSize:'20',color:'black'}}>
-  Summary
-  </Typography>
-
-  <br/>
-
-<Typography className= {classes.cardTitle} color="textSecondary" gutterBottom>
-Loud Silence
-<br/> <br/>
-item 1 details
-<br/>
-item 2 details
-</Typography>
-
-
-<br/>
-<Divider/>
-<br/>
-
-<Typography>
-  Total amount details
-</Typography>
-
-<br/>
-<Button variant="contained"
-                    color="primary"
-                    className={classes.button1}>
-                        PLACE ORDER
-                    </Button>
-
-                    
-</CardContent>
-
-</Card>
-</GridListTile>
- 
-
-
-</GridList>
-    </div>
-
-
-
-)
-
-
-}
+                <br />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button1}
+                >
+                  PLACE ORDER
+                </Button>
+              </CardContent>
+            </Card>
+          </GridListTile>
+        </GridList>
+      </div>
+    );
+  }
 }
 export default withStyles(styles)(Checkout);
