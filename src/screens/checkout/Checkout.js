@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./Checkout.css";
-//import "../checkout/Checkout.css";
+import "../checkout/Checkout.css";
 import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -78,7 +78,8 @@ const styles = theme => ({
   cardTitle: {
     fontSize: 14,
     width: "90%"
-  }
+  },
+
 });
 
 class Checkout extends Component {
@@ -98,11 +99,61 @@ class Checkout extends Component {
       states: ["Maharashtra", "Karnataka", "Bihar", "Kerala"],
       value: 0,
       activeStep: 0,
-      finishSignal: 0
+      finishSignal: 0,
+      flatNo:"",
+      flatNoRequired:"noDisplay",
+      locality:"",
+      localityRequired:"noDisplay",
+      city:"",
+      cityRequired:"noDisplay",
+      state:"",
+      stateRequired:"noDisplay",
+      pinCode:"",
+      pinCodeRequired:"noDisplay",
+
     };
   }
 
+
+
+  //question: onchange in form, makes code too lengthy, with too many variables and event handlers. any other way ?
   //manage event handlers and other functions here
+
+  onChangeFlatNo =event=>{
+
+this.setState({
+flatNo:event.target.value
+})
+  }
+
+  onChangeLocality =event=>{
+this.setState({
+  locality:event.target.value
+})
+
+  }
+
+  onChangeCity =event=>{
+    this.setState({
+      city:event.target.value
+    })
+
+  }
+
+  onChangeState =event=>{
+    this.setState({
+      state:event.target.value
+    })
+
+  }
+
+  onChangePinCode =event=>{
+    this.setState({
+      pinCode:event.target.value
+    })
+
+  }
+
 
   tabChangeHandler = (event, value) => {
     this.setState({ value: value });
@@ -132,6 +183,50 @@ class Checkout extends Component {
   handleGridCheck = e => {
     e.target.style.color = "green";
   };
+
+  saveAddressHandler = event => {
+
+    {
+this.state.flatNo==="" ? (this.setState({
+ flatNoRequired:"display" 
+})):(this.setState({
+  flatNoRequired:"noDisplay" 
+ }))
+    }
+
+    {
+      this.state.locality==="" ?(this.setState({
+       localityRequired:"display" 
+      })):(this.setState({
+        localityRequired:"noDisplay" 
+       }))
+          }
+
+          {
+            this.state.city==="" ?(this.setState({
+             cityRequired:"display" 
+            })):(this.setState({
+              cityRequired:"noDisplay" 
+             }))
+                }
+
+                { 
+                  this.state.state==="" ?(this.setState({
+                   stateRequired:"display" 
+                  })):(this.setState({
+                    stateRequired:"noDisplay" 
+                   }))
+                      }
+
+                      {
+                        this.state.pinCode==="" ?(this.setState({
+                         pinCodeRequired:"display" 
+                        })):(this.setState({
+                          pinCodeRequired:"noDisplay" 
+                         }))
+                            }
+
+  }
 
   render() {
     const { classes } = this.props;
@@ -268,35 +363,78 @@ class Checkout extends Component {
                     {/* form for new address */}
 
                     {this.state.activeStep === 0 && this.state.value === 1 ? (
+                      <div>
                       <form className={classes.container}>
                         <FormControl>
-                          <TextField label="Flat/Building No" />
+                          <TextField label="Flat / Building No" onChange={this.onChangeFlatNo}/>
+                          <FormHelperText className={this.state.flatNoRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
                         <br />
                         <FormControl>
-                          <TextField label="Locality" />
+                          <TextField label="Locality" onChange={this.onChangeLocality} />
+                          <FormHelperText className={this.state.localityRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
                         <br />
                         <FormControl>
-                          <TextField label="City" />
+                          <TextField label="City"  onChange={this.onChangeCity}/>
+                          <FormHelperText className={this.state.cityRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
                         <br />
                         <FormControl>
                           <InputLabel htmlFor="">State</InputLabel>
-                          <Select>
+                          <Select onChange={this.onChangeState}>
                             {this.state.states.map(state => (
                               <MenuItem>{state}</MenuItem>
                             ))}
                           </Select>
+                          <FormHelperText className={this.state.stateRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
 
                         <br />
-                        
+
                         <FormControl>
-                          <TextField label="Pincode" />
+                          <TextField label="Pincode" onChange={this.onChangePinCode} />
+                          <FormHelperText className={this.state.pinCodeRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
-                      </form>
+<br/>
+                        <FormControl>
+                          <Button variant="contained" color="secondary" onClick={this.saveAddressHandler} >SAVE ADDRESS</Button>
+                        </FormControl>
+
+                        </form>
+                      
+
+
+
+
+
+
+
+
+
+                          <Button
+                          disabled
+                            className={classes.button}
+                            onClick={this.handleChangeAfterFinish}
+                          >
+                            BACK
+                          </Button>
+
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={this.handleFinish}
+                          >
+                            FINISH
+                          </Button>
+                        
+                       
+                        </div>
+                      
                     ) : null}
+
+
                   </StepContent>
                   }
                 </Step>
