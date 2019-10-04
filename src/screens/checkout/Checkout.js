@@ -73,12 +73,13 @@ const styles = theme => ({
   container: {
     display: "flex",
     flexDirection: "column",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    width:"20%",
   },
   cardTitle: {
     fontSize: 14,
     width: "90%"
-  },
+  }
 
 });
 
@@ -365,7 +366,7 @@ this.state.flatNo==="" ? (this.setState({
                     {this.state.activeStep === 0 && this.state.value === 1 ? (
                       <div>
                       <form className={classes.container}>
-                        <FormControl>
+                        <FormControl >
                           <TextField label="Flat / Building No" onChange={this.onChangeFlatNo}/>
                           <FormHelperText className={this.state.flatNoRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                         </FormControl>
@@ -398,7 +399,7 @@ this.state.flatNo==="" ? (this.setState({
                         </FormControl>
 <br/>
                         <FormControl>
-                          <Button variant="contained" color="secondary" onClick={this.saveAddressHandler} >SAVE ADDRESS</Button>
+                          <Button variant="contained" color="secondary" style={{width:"80%"}}onClick={this.saveAddressHandler} >SAVE ADDRESS</Button>
                         </FormControl>
 
                         </form>
