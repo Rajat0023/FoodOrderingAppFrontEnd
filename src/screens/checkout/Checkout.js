@@ -37,6 +37,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Select from "@material-ui/core/Select";
+import { createHash } from "crypto";
 
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
@@ -111,6 +112,7 @@ class Checkout extends Component {
       stateRequired:"noDisplay",
       pinCode:"",
       pinCodeRequired:"noDisplay",
+      addressResponse:[],                    //WHATS THE DIFF BETWENN []. [{}]
 
     };
   }
@@ -227,9 +229,37 @@ this.state.flatNo==="" ? (this.setState({
                          }))
                             }
 
+         
+
   }
 
-  render() {
+  componentWillMount(){
+    let data=null; //request body
+    let xhr=new XMLHttpRequest();
+    let that=this;
+    
+    
+    xhr.addEventListener("readystatechange",function(){
+if (this.readyState===4){
+
+ console.log(JSON.parse(this.responseText)); //parsing string to json object
+ that.setState({
+  addressResponse:JSON.parse(this.responseText).addresses   // we retreive list frmo json object
+}); 
+}
+    });
+    
+    //have base url within props and use it as this.props.baseUrl
+    xhr.open("GET","http://localhost:8000/api/address/customer");
+   xhr.setRequestHeader("Accept","application/json;charset=UTF-8");
+    xhr.setRequestHeader("authorization","database_accesstoken2");
+  xhr.setRequestHeader("Cache-Control", "no-cache");
+    xhr.send(data);
+    
+    
+                      }
+
+  render() {  
     const { classes } = this.props;
 
     return (
@@ -265,9 +295,9 @@ this.state.flatNo==="" ? (this.setState({
                     this.state.value === 0 ? (
                       <div>
                         <GridList className={classes.gridList} cols={3}>
-                          {this.state.address.map(add => (
-                            <GridListTile key={add}>
-                              <h>{add}</h>
+                          {this.state.addressResponse.map(add => (
+                            <GridListTile key={add.id}>
+                              <h>{add.flat_building_name} , {add.locality} , {add.city} , {add.state.state_name} , {add.pincode}</h>
                               <IconButton>
                                 <CheckCircleIcon
                                   onClick={this.handleGridCheck}
@@ -333,12 +363,7 @@ this.state.flatNo==="" ? (this.setState({
                               control={<Radio />}
                               label="Debit/Credit Card"
                             />
-                            <FormControlLabel
-                              value="disabled"
-                              disabled
-                              control={<Radio />}
-                              label="(Disabled option)"
-                            />
+                          
                           </RadioGroup>
                         </FormControl>
                         <div>
