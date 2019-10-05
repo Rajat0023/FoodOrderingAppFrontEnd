@@ -297,7 +297,7 @@ if (this.readyState===4){
                         <GridList className={classes.gridList} cols={3}>
                           {this.state.addressResponse.map(add => (
                             <GridListTile key={add.id}>
-                              <h>{add.flat_building_name} , {add.locality} , {add.city} , {add.state.state_name} , {add.pincode}</h>
+                              <h>{add.flat_building_name} ,<br/> {add.locality} ,<br/> {add.city} ,<br/> {add.state.state_name} ,<br/> {add.pincode}</h>
                               <IconButton>
                                 <CheckCircleIcon
                                   onClick={this.handleGridCheck}
