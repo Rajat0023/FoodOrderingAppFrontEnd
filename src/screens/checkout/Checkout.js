@@ -98,7 +98,6 @@ class Checkout extends Component {
         "My address4",
         "My address5"
       ],
-      states: ["Maharashtra", "Karnataka", "Bihar", "Kerala"],
       value: 0,
       activeStep: 0,
       finishSignal: 0,
@@ -113,6 +112,7 @@ class Checkout extends Component {
       pinCode:"",
       pinCodeRequired:"noDisplay",
       addressResponse:[],                    //WHATS THE DIFF BETWENN []. [{}]
+      states:[],
 
     };
   }
@@ -234,10 +234,32 @@ this.state.flatNo==="" ? (this.setState({
   }
 
   componentWillMount(){
-    let data=null; //request body
+    let requestData=null; //request body
     let xhr=new XMLHttpRequest();
+    let xhr1=new XMLHttpRequest();
     let that=this;
     
+
+    xhr1.addEventListener("readystatechange",function(){
+      if (this.readyState===4){
+      
+       console.log(JSON.parse(this.responseText)); //parsing string to json object
+       that.setState({
+        states:JSON.parse(this.responseText).states
+      }); 
+      }
+          });
+          
+          //have base url within props and use it as this.props.baseUrl
+          xhr1.open("GET","http://localhost:8000/api/states");
+         xhr1.setRequestHeader("Accept","application/json;charset=UTF-8");
+        xhr1.setRequestHeader("Cache-Control", "no-cache");
+          xhr1.send(requestData);
+
+
+
+
+
     
     xhr.addEventListener("readystatechange",function(){
 if (this.readyState===4){
@@ -254,7 +276,7 @@ if (this.readyState===4){
    xhr.setRequestHeader("Accept","application/json;charset=UTF-8");
     xhr.setRequestHeader("authorization","database_accesstoken2");
   xhr.setRequestHeader("Cache-Control", "no-cache");
-    xhr.send(data);
+    xhr.send(requestData);
     
     
                       }
@@ -410,7 +432,7 @@ if (this.readyState===4){
                           <InputLabel htmlFor="">State</InputLabel>
                           <Select onChange={this.onChangeState}>
                             {this.state.states.map(state => (
-                              <MenuItem>{state}</MenuItem>
+                              <MenuItem>{state.state_name}</MenuItem>
                             ))}
                           </Select>
                           <FormHelperText className={this.state.stateRequired}><span style={{color:"red"}}>required</span></FormHelperText>
