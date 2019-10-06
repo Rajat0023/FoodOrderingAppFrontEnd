@@ -102,7 +102,8 @@ class Header extends Component {
       restaurantName: "",
       signUpSuccess: false,
       open: false,
-      loggedIn: sessionStorage.getItem("access-token") == null ? false : true
+      loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+      loginText: "LOGIN"
     }
   }
 
@@ -210,6 +211,7 @@ class Header extends Component {
           that.setState({loggedIn: true });
           that.setState({ open: true })
           that.setState({successMessage: "Logged in successfully!" })
+          that.setState({loginText: JSON.parse(this.responseText).first_name})
           that.closeModalHandler();
         }
 
@@ -395,7 +397,7 @@ class Header extends Component {
             onClick={this.openModalHandler}
             startIcon={<AccountCircleIcon />}
           >
-            LOGIN
+            {this.state.loginText}
                      </Button>
         </div>
         <Modal isOpen={this.state.modalIsOpen} contentLabel='Login Modal' ariaHideApp={false}
