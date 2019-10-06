@@ -16,6 +16,7 @@ import Tab from '@material-ui/core/Tab';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Snackbar from '@material-ui/core/Snackbar';
 
 
 const customStyles = {
@@ -74,14 +75,28 @@ class Header extends Component {
     this.state = {
       contactNumber: "",
       loginPassword: "",
+      firstname: "",
+      lastname: "",
+      email: "",
+      signUpPassword: "",
+      signUpContactNumber: "",
+      firstnameRequired: "dispNone",
+      emailRequired:"dispNone",
       contactNumberRequired: "dispNone",
-      invalidContact:"dispNone",
+      signUpContactNumberRequired: "dispNone",
       loginPasswordRequired: "dispNone",
+      signUpPasswordRequired: "dispNone",
+      invalidContact:"dispNone",
+      invalidEmail: "dispNone",
+      invalidPassword: "dispNone",
+      invalidSignUpContact:"dispNone",
       modalIsOpen: false,
       value: 0,
       responseData: [],
       searchedRestaurants: [],
-      restaurantName: ""
+      restaurantName: "",
+      signUpSuccess: false,
+      open: false
     }
   }
 
@@ -113,12 +128,32 @@ class Header extends Component {
   console.log(this.state.responseData);
 }
 
+openTabHandler = (event,value) => {
+  this.setState({value})
+}
+
+closeModalHandler = () => {
+  this.setState({modalIsOpen: false});
+}
+
 openModalHandler = () => {
   this.setState({modalIsOpen: true});
   this.setState({
       contactNumberRequired: 'dispNone',
       loginPasswordRequired: "dispNone",
       invalidContact:"dispNone",
+      firstnameRequired: "dispNone",
+      emailRequired:"dispNone",
+      signUpPasswordRequired: "dispNone",
+      signUpContactNumberRequired: "dispNone",
+      invalidEmail: "dispNone",
+      invalidPassword: "dispNone",
+      invalidSignUpContact:"dispNone",
+      firstname: "",
+      lastname: "",
+      email: "",
+      signUpPassword: "",
+      signUpContactNumber: "",
       loginPassword: "",
       contactNumber: "",
       value: 0        
@@ -153,6 +188,118 @@ loginClickHandler= () => {
   this.state.loginPassword === "" ? this.setState({loginPasswordRequired: 'dispBlock'}) 
   : this.setState({loginPasswordRequired: 'dispNone'})
 }
+
+inputFirstNameChangeHandler = (e) => {
+  this.setState({firstname: e.target.value})
+}
+
+inputLastNameChangeHandler =(e) => {
+  this.setState({lastname: e.target.value})
+}
+
+inputEmailChangeHandler = (e) =>{
+  this.setState({email: e.target.value})
+}
+
+inputSignUpContactNumberChangeHandler = (e) => {
+  this.setState({signUpContactNumber: e.target.value})
+}
+
+inputSignUpPasswordChangeHandler = (e) => {
+  this.setState({signUpPassword: e.target.value})
+}
+
+signUpClickHandler = () => {
+
+// Performing check for email
+
+var emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var mail = this.state.email;
+if (mail.match(emailRegex)) {
+  this.setState({invalidEmail: 'dispNone'});
+}
+else {
+  this.setState({invalidEmail: 'dispBlock'});
+}
+
+// Performing check for password 
+
+var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{5,})");
+var password = this.state.signUpPassword;
+if (password.match(passwordRegex)) {
+  this.setState({invalidPassword: 'dispNone'});
+}
+else {
+  this.setState({invalidPassword: 'dispBlock'});
+}
+
+// Performing check for Sign up contact number 
+
+var signUpContactRegex = /^[0-9]{10}$/ 
+var contact  = this.state.signUpContactNumber;
+if (contact.match(signUpContactRegex)) {
+  this.setState({ invalidSignUpContact: 'dispNone'})
+}
+else {
+  this.setState({ invalidSignUpContact: 'dispBlock'})
+}
+
+  this.state.firstname === "" ? this.setState({firstnameRequired: 'dispBlock'}) 
+  : this.setState({firstnameRequired: 'dispNone'})
+
+  this.state.email === "" ? this.setState({
+    emailRequired: 'dispBlock',
+    invalidEmail: 'dispNone'
+  }) 
+  : this.setState({emailRequired: 'dispNone'})
+
+  this.state.signUpContactNumber === "" ? this.setState({
+    signUpContactNumberRequired: 'dispBlock',
+    invalidSignUpContact: 'dispNone'
+  }) 
+  : this.setState({signUpContactNumberRequired: 'dispNone'})
+
+  this.state.signUpPassword === "" ? this.setState({
+    signUpPasswordRequired: 'dispBlock',
+    invalidPassword: 'dispNone'
+  }) 
+  : this.setState({signUpPasswordRequired: 'dispNone'})
+
+  let dataSignUp = JSON.stringify ({
+    "contact_number": this.state.signUpContactNumber,
+    "email_address": this.state.email,
+    "first_name": this.state.firstname,
+    "last_name": this.state.lastname,
+    "password": this.state.signUpPassword
+  })
+
+  let xhrSignUp = new XMLHttpRequest();
+    let that = this;
+    xhrSignUp.addEventListener("readystatechange", function () {
+
+        if (this.readyState === 4) {
+            console.log(this.responseText);
+            that.setState({signUpSuccess: true})
+            that.setState({open: true})
+            that.setState({value: 0})
+        }
+
+    })
+
+    xhrSignUp.open("POST","http://localhost:8080/api/customer/signup");
+    xhrSignUp.setRequestHeader("Content-Type", "application/json");
+    xhrSignUp.setRequestHeader("Cache-Control", "no-cache");
+    xhrSignUp.send(dataSignUp);
+} 
+
+ handleClose = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+this.setState({open: false})
+};
+
+
 
     render () {
         const { classes } = this.props;
@@ -202,7 +349,7 @@ loginClickHandler= () => {
 
                     {this.state.value===0 &&
                 <TabContainer>
-                    <FormControl required>
+                    <FormControl required fullWidth = 'true'>
                         <InputLabel htmlFor='contactnumber'>Contact No.</InputLabel>
                         <Input id='contactnumber' type='text' contactNumber = {this.state.contactNumber} 
                         onChange={this.inputContactNumberChangeHandler} />
@@ -215,7 +362,7 @@ loginClickHandler= () => {
                         </FormHelperText>
                         
                     </FormControl> <br /> <br />
-                    <FormControl required>
+                    <FormControl required fullWidth = 'true'>
                         <InputLabel htmlFor='loginPassword'>Password</InputLabel>
                         <Input id='loginPassword' type='password' loginpassword={this.state.loginPassword}
                         onChange={this.inputLoginPasswordChangeHandler}/>
@@ -227,7 +374,78 @@ loginClickHandler= () => {
                 </TabContainer>
                     }
 
-                    </Modal>
+                  {this.state.value===1 &&
+                    <TabContainer>
+                    <FormControl required fullWidth = 'true'>
+                        <InputLabel htmlFor='firstname'>First Name</InputLabel>
+                        <Input id='firstname' type='text' firstname = {this.state.firstname} 
+                        onChange={this.inputFirstNameChangeHandler} />
+                        <FormHelperText className={this.state.firstnameRequired}> <span className='red'>
+                            required </span>
+                        </FormHelperText>
+                    </FormControl> <br /> <br />
+                    <FormControl fullWidth = 'true'>
+                        <InputLabel htmlFor='lastname'>Last Name</InputLabel>
+                        <Input id='lastname' type='text' lastname = {this.state.lastname} 
+                        onChange={this.inputLastNameChangeHandler} />
+                    </FormControl> <br /> <br />
+                    <FormControl required fullWidth = 'true'>
+                        <InputLabel htmlFor='email'>Email</InputLabel>
+                        <Input id='email' type='email' email = {this.state.email} 
+                        onChange={this.inputEmailChangeHandler} />
+                        <FormHelperText className={this.state.emailRequired}> <span className='red'>
+                            required </span>
+                        </FormHelperText>
+
+                        <FormHelperText className={this.state.invalidEmail}> <span className='red'>
+                            Invalid Email </span>
+                        </FormHelperText>
+
+                    </FormControl> <br /> <br />
+                    <FormControl required fullWidth = 'true'>
+                        <InputLabel htmlFor='signUpPassword'>Password</InputLabel>
+                        <Input id='signUpPassword' type='password' signUpPassword={this.state.signUpPassword}
+                        onChange={this.inputSignUpPasswordChangeHandler}/>
+                        <FormHelperText className={this.state.signUpPasswordRequired}> <span className='red'>
+                            required </span>
+                        </FormHelperText>
+
+                        <FormHelperText className={this.state.invalidPassword}> <span className='red'>
+                            Password must contain at least one capital letter, one small letter, one number, and one special character </span>
+                        </FormHelperText>
+                    </FormControl><br /> <br />
+                    <FormControl required fullWidth = 'true'>
+                        <InputLabel htmlFor='contactno'>Contact No</InputLabel>
+                        <Input id='contactno' type='text' contactno = {this.state.signUpContactNumber} 
+                        onChange={this.inputSignUpContactNumberChangeHandler} />
+                        <FormHelperText className={this.state.signUpContactNumberRequired}> <span className='red'>
+                            required </span>
+                        </FormHelperText>
+
+                        <FormHelperText className={this.state.invalidSignUpContact}> <span className='red'>
+                        Contact No. must contain only numbers and must be 10 digits long </span>
+                        </FormHelperText>
+                    </FormControl> <br /> <br />
+                    <Button variant='contained' color='primary' onClick={this.signUpClickHandler}>SIGNUP</Button>
+                </TabContainer>
+                  }
+                  </Modal>
+
+                    <Snackbar
+                    anchorOrigin={{ 
+                      vertical: 'bottom',
+                      horizontal: 'left', 
+                    }}
+                    open={this.state.open}
+                    autoHideDuration={3000}
+                    onClose={this.handleClose}
+                    ContentProps={{
+                      'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">Registered successfully! Please login now!</span>}
+                    />
+                    
+                  
             </header>
         )
     }
