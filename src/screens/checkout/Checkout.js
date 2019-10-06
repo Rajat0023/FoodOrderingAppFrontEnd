@@ -107,12 +107,13 @@ class Checkout extends Component {
       localityRequired:"noDisplay",
       city:"",
       cityRequired:"noDisplay",
-      state:"",
       stateRequired:"noDisplay",
       pinCode:"",
       pinCodeRequired:"noDisplay",
+      pinCodeInvalid:"noDisplay",
       addressResponse:[],                    //WHATS THE DIFF BETWENN []. [{}]
       states:[],
+      stateName:"",
 
     };
   }
@@ -121,6 +122,16 @@ class Checkout extends Component {
 
   //question: onchange in form, makes code too lengthy, with too many variables and event handlers. any other way ?
   //manage event handlers and other functions here
+
+
+
+  handleStateSelect =event=>{
+
+this.setState({
+  stateName:event.target.value
+})
+
+  }
 
   onChangeFlatNo =event=>{
 
@@ -214,20 +225,31 @@ this.state.flatNo==="" ? (this.setState({
                 }
 
                 { 
-                  this.state.state==="" ?(this.setState({
+                  this.state.stateName==="" ?(this.setState({
                    stateRequired:"display" 
                   })):(this.setState({
                     stateRequired:"noDisplay" 
                    }))
                       }
 
+
+
                       {
-                        this.state.pinCode==="" ?(this.setState({
+                        this.state.pinCode==="" ? (this.setState({
                          pinCodeRequired:"display" 
-                        })):(this.setState({
-                          pinCodeRequired:"noDisplay" 
+                        })) :
+
+                        this.state.pinCode.length!=6 ?
+                        (this.setState({
+                          pinCodeInvalid:"display" 
+                         })) : 
+                         (this.setState({
+                          pinCodeRequired:"noDisplay",
+                          pinCodeInvalid:"noDisplay"
                          }))
-                            }
+                         
+                          }
+
 
          
 
@@ -430,9 +452,9 @@ if (this.readyState===4){
                         <br />
                         <FormControl>
                           <InputLabel htmlFor="">State</InputLabel>
-                          <Select onChange={this.onChangeState}>
+                          <Select value={this.state.stateName} onChange={this.handleStateSelect}  >
                             {this.state.states.map(state => (
-                              <MenuItem>{state.state_name}</MenuItem>
+                              <MenuItem value={state.state_name}>{state.state_name}</MenuItem>
                             ))}
                           </Select>
                           <FormHelperText className={this.state.stateRequired}><span style={{color:"red"}}>required</span></FormHelperText>
@@ -443,6 +465,7 @@ if (this.readyState===4){
                         <FormControl>
                           <TextField label="Pincode" onChange={this.onChangePinCode} />
                           <FormHelperText className={this.state.pinCodeRequired}><span style={{color:"red"}}>required</span></FormHelperText>
+                          <FormHelperText className={this.state.pinCodeInvalid}><span style={{color:"red"}}>Pincode must contain only numbers and must be 6 digits long</span></FormHelperText>
                         </FormControl>
 <br/>
                         <FormControl>
