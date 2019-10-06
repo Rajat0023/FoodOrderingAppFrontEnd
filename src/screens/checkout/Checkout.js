@@ -91,13 +91,7 @@ class Checkout extends Component {
     //declare and initialize state variables here
     this.state = {
       tabList: ["Delivery", "Payment"],
-      address: [
-        "My address1",
-        "My address2",
-        "My address3",
-        "My address4",
-        "My address5"
-      ],
+      paymentMediums:[],
       value: 0,
       activeStep: 0,
       finishSignal: 0,
@@ -259,8 +253,36 @@ this.state.flatNo==="" ? (this.setState({
     let requestData=null; //request body
     let xhr=new XMLHttpRequest();
     let xhr1=new XMLHttpRequest();
+    let xhr2=new XMLHttpRequest();
     let that=this;
     
+    xhr2.addEventListener("readystatechange",function(){
+      if (this.readyState===4){
+      
+       console.log(JSON.parse(this.responseText)); //parsing string to json object
+       that.setState({
+        paymentMediums:JSON.parse(this.responseText).paymentMethods
+      }); 
+      }
+          });
+          
+          //have base url within props and use it as this.props.baseUrl
+          xhr2.open("GET","http://localhost:8000/api/payment");
+         xhr2.setRequestHeader("Accept","application/json;charset=UTF-8");
+        xhr2.setRequestHeader("Cache-Control", "no-cache");
+          xhr2.send(requestData);
+
+
+
+
+
+
+
+
+
+
+
+
 
     xhr1.addEventListener("readystatechange",function(){
       if (this.readyState===4){
@@ -378,38 +400,27 @@ if (this.readyState===4){
                       <div>
                         <FormControl
                           component="fieldset"
-                          className={classes.formControl}
-                        >
+                          className={classes.formControl}>
                           <FormLabel component="legend">
                             Select mode of Payment
                           </FormLabel>
+                          {
+                            this.state.paymentMediums.map(payment =>(    
                           <RadioGroup
                             aria-label=""
                             name="" /* value={value} */ /* onChange={handleChange} */
                           >
                             <FormControlLabel
-                              value="cashOnDelivery"
+                              value={payment.payment_name}
                               control={<Radio />}
-                              label="Cash on Delivery"
-                            />
-                            <FormControlLabel
-                              value="wallet"
-                              control={<Radio />}
-                              label="Wallet"
-                            />
-                            <FormControlLabel
-                              value="netBanking"
-                              control={<Radio />}
-                              label="Net Banking"
-                            />
-                            <FormControlLabel
-                              value="debit/CreditCard"
-                              control={<Radio />}
-                              label="Debit/Credit Card"
-                            />
-                          
+                              label={payment.payment_name}
+                            />                      
                           </RadioGroup>
+                            ))
+                          }
                         </FormControl>
+
+
                         <div>
                           <Button
                             className={classes.button}
