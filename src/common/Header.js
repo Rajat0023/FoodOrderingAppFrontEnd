@@ -217,7 +217,10 @@ class Header extends Component {
           console.log(this.responseText);
           that.setState({ loginErrorMessage: JSON.parse(this.responseText).message })
           that.setState({ loggedIn: false })
+
+          if (that.state.invalidContact === 'dispNone') {
           that.setState({ message: 'dispBlock' })
+          }
         }
       });
 
