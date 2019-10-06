@@ -108,6 +108,7 @@ class Checkout extends Component {
       addressResponse:[],                    //WHATS THE DIFF BETWENN []. [{}]
       states:[],
       stateName:"",
+      stateUuid:""
 
     };
   }
@@ -120,15 +121,13 @@ class Checkout extends Component {
 
 
   handleStateSelect =event=>{
-
 this.setState({
-  stateName:event.target.value
+  stateUuid:event.target.value
 })
 
   }
 
   onChangeFlatNo =event=>{
-
 this.setState({
 flatNo:event.target.value
 })
@@ -144,13 +143,6 @@ this.setState({
   onChangeCity =event=>{
     this.setState({
       city:event.target.value
-    })
-
-  }
-
-  onChangeState =event=>{
-    this.setState({
-      state:event.target.value
     })
 
   }
@@ -219,7 +211,7 @@ this.state.flatNo==="" ? (this.setState({
                 }
 
                 { 
-                  this.state.stateName==="" ?(this.setState({
+                  this.state.stateUuid==="" ?(this.setState({
                    stateRequired:"display" 
                   })):(this.setState({
                     stateRequired:"noDisplay" 
@@ -241,7 +233,40 @@ this.state.flatNo==="" ? (this.setState({
                           pinCodeRequired:"noDisplay",
                           pinCodeInvalid:"noDisplay"
                          }))
-                         
+
+
+
+
+                          let requestData=JSON.stringify({
+                          "city": this.state.city,
+                          "flat_building_name":this.state.flatNo ,
+                          "locality":this.state.locality ,
+                          "pincode": this.state.pinCode,
+                          "state_uuid": this.state.stateUuid
+                        }) 
+                    
+                        
+                        let xhr3=new XMLHttpRequest();
+let that=this;
+                        xhr3.addEventListener("readystatechange",function(){
+                          if (this.readyState===4){
+                          
+                           console.log(this.responseText); //parsing string to json object
+                           
+                          }
+                              });
+                              
+                              //have base url within props and use it as this.props.baseUrl
+                              xhr3.open("POST","http://localhost:8000/api/address");
+                             xhr3.setRequestHeader("Content-Type","application/json");
+                            xhr3.setRequestHeader("Cache-Control", "no-cache");
+                            xhr3.setRequestHeader("authorization","database_accesstoken2");
+                            console.log(requestData);
+                              xhr3.send(requestData);
+                    
+
+
+
                           }
 
 
@@ -270,6 +295,7 @@ this.state.flatNo==="" ? (this.setState({
           xhr2.open("GET","http://localhost:8000/api/payment");
          xhr2.setRequestHeader("Accept","application/json;charset=UTF-8");
         xhr2.setRequestHeader("Cache-Control", "no-cache");
+        
           xhr2.send(requestData);
 
 
@@ -445,7 +471,7 @@ if (this.readyState===4){
 
                     {this.state.activeStep === 0 && this.state.value === 1 ? (
                       <div>
-                      <form className={classes.container}>
+                      <form className={classes.container} >
                         <FormControl >
                           <TextField label="Flat / Building No" onChange={this.onChangeFlatNo}/>
                           <FormHelperText className={this.state.flatNoRequired}><span style={{color:"red"}}>required</span></FormHelperText>
@@ -463,9 +489,9 @@ if (this.readyState===4){
                         <br />
                         <FormControl>
                           <InputLabel htmlFor="">State</InputLabel>
-                          <Select value={this.state.stateName} onChange={this.handleStateSelect}  >
+                          <Select value={this.state.stateUuid} onChange={this.handleStateSelect}  >
                             {this.state.states.map(state => (
-                              <MenuItem value={state.state_name}>{state.state_name}</MenuItem>
+                              <MenuItem value={state.id}>{state.state_name}</MenuItem>
                             ))}
                           </Select>
                           <FormHelperText className={this.state.stateRequired}><span style={{color:"red"}}>required</span></FormHelperText>
