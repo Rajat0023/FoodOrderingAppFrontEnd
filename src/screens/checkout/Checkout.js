@@ -4,7 +4,6 @@ import "../checkout/Checkout.css";
 import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Grid from "@material-ui/core/Grid";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -14,21 +13,14 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import InputLabel from "@material-ui/core/InputLabel";
+import GridListTile from '@material-ui/core/GridListTile';
+import AppBar from '@material-ui/core/AppBar';
 import Input from "@material-ui/core/Input";
 import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import Avatar from "@material-ui/core/Avatar";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import Favorite from "@material-ui/icons/Favorite";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import SearchIcon from "@material-ui/icons/Search";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Paper from "@material-ui/core/Paper";
-import { CardHeader, AppBar, GridListTile } from "@material-ui/core";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormHelperText from "@material-ui/core/FormHelperText";
@@ -37,7 +29,6 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Select from "@material-ui/core/Select";
-import { createHash } from "crypto";
 
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
@@ -78,19 +69,27 @@ const styles = theme => ({
     width:"20%",
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: "14px",
     width: "90%"
   }
 
 });
 
+
+//---------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 class Checkout extends Component {
+
   constructor() {
     super();
 
     //declare and initialize state variables here
     this.state = {
       tabList: ["Delivery", "Payment"],
+      addressIconCounter:0,
       paymentMediums:[],
       value: 0,
       activeStep: 0,
@@ -105,7 +104,7 @@ class Checkout extends Component {
       pinCode:"",
       pinCodeRequired:"noDisplay",
       pinCodeInvalid:"noDisplay",
-      addressResponse:[],                    //WHATS THE DIFF BETWENN []. [{}]
+      addressResponse:[],                 
       states:[],
       stateName:"",
       stateUuid:""
@@ -115,10 +114,47 @@ class Checkout extends Component {
 
 
 
-  //question: onchange in form, makes code too lengthy, with too many variables and event handlers. any other way ?
-  //manage event handlers and other functions here
+  
+  //---------------manage event handlers and other functions here---------------------------------------------------------------
 
+handlePlaceOrder=event=>{
+  let requestData=JSON.stringify({
+    "address_id": "string",
+    "bill": 0,
+    "coupon_id": "string",
+    "discount": 0,
+    "item_quantities": [
+      {
+        "item_id": "string",
+        "price": 0,
+        "quantity": 0
+      }
+    ],
+    "payment_id": "string",
+    "restaurant_id": "string"
+  }) 
 
+  
+  let xhr4=new XMLHttpRequest();
+let that=this;
+  xhr4.addEventListener("readystatechange",function(){
+    if (this.readyState===4){
+    
+     console.log(this.responseText); //parsing string to json object
+     
+    }
+        });
+        
+        //have base url within props and use it as this.props.baseUrl
+        xhr4.open("POST","http://localhost:8000/api/order");
+       xhr4.setRequestHeader("Content-Type","application/json");
+      xhr4.setRequestHeader("Cache-Control", "no-cache");
+      xhr4.setRequestHeader("authorization","database_accesstoken2");
+      console.log(requestData);
+        xhr4.send(requestData);
+  
+
+}
 
   handleStateSelect =event=>{
 this.setState({
@@ -181,7 +217,25 @@ this.setState({
   };
 
   handleGridCheck = e => {
-    e.target.style.color = "green";
+    {
+    this.state.addressIconCounter===0 ?
+    (this.setState({
+      addressIconCounter:(this.state.addressIconCounter + 1)}))
+      :
+(this.setState({
+  addressIconCounter:(this.state.addressIconCounter - 1)}))
+
+}
+
+console.log(this.state.addressIconCounter);
+
+    {
+      this.state.addressIconCounter===0 ?
+   ( e.target.style.color = "green") 
+   :
+   (e.target.style.color="grey")
+    }
+
   };
 
   saveAddressHandler = event => {
@@ -351,6 +405,11 @@ if (this.readyState===4){
     
                       }
 
+//--------------------------------------------------------------------------------------------------------------------------
+
+
+
+
   render() {  
     const { classes } = this.props;
 
@@ -358,15 +417,16 @@ if (this.readyState===4){
       <div>
         <header>header component to be reused here</header>
         <br />
+
         <GridList className={classes.gridList} cols={2}>
           <GridListTile style={{ width: "70%", height: "100%" }}>
-            {/* <div className={classes.root}> */}
+          
 
             <Stepper activeStep={this.state.activeStep} orientation="vertical">
               {this.state.tabList.map((label, index) => (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
-                  <br />
+
                   {this.state.activeStep === 0 && label === "Delivery" ? (
                     <div style={{ marginLeft: "30px" }}>
                       <AppBar position="static">
@@ -381,7 +441,7 @@ if (this.readyState===4){
                     </div>
                   ) : null}
                   <StepContent>
-                    {/* <Typography>{this.getStepContent(index)}</Typography> */}
+                   
                     {this.state.activeStep === 0 &&
                     label === "Delivery" &&
                     this.state.value === 0 ? (
@@ -391,7 +451,7 @@ if (this.readyState===4){
                             <GridListTile key={add.id}>
                               <h>{add.flat_building_name} ,<br/> {add.locality} ,<br/> {add.city} ,<br/> {add.state.state_name} ,<br/> {add.pincode}</h>
                               <IconButton>
-                                <CheckCircleIcon
+                                <CheckCircleIcon value={add.id}
                                   onClick={this.handleGridCheck}
                                 />
                               </IconButton>
@@ -561,7 +621,8 @@ if (this.readyState===4){
           <GridListTile style={{ width: "30%", height: "100%" }}>
             <Card className={classes.cardTitle}>
               <CardContent>
-                <Typography style={{ fontSize: "20", color: "black" }}>
+                <br/>
+                <Typography style={{ fontSize: "20px", color: "black" }}>
                   Summary
                 </Typography>
 
@@ -572,24 +633,20 @@ if (this.readyState===4){
                   color="textSecondary"
                   gutterBottom
                 >
-                  Loud Silence
-                  <br /> <br />
-                  item 1 details
-                  <br />
-                  item 2 details
+                copy paste design of rest from details, and use props on routing
                 </Typography>
 
                 <br />
                 <Divider />
                 <br />
 
-                <Typography>Total amount details</Typography>
+                <Typography>Net Amount : total amount from details</Typography>
 
                 <br />
                 <Button
                   variant="contained"
                   color="primary"
-                  className={classes.button1}
+                  className={classes.button1} onClick={this.handlePlaceOrder}
                 >
                   PLACE ORDER
                 </Button>
