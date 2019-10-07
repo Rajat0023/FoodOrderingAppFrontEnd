@@ -525,7 +525,7 @@ if (this.readyState===4){
                           {this.state.addressResponse.map(add => (
                             <GridListTile key={add.id}  >
                               <h>{add.flat_building_name} ,<br/> {add.locality} ,<br/> {add.city} ,<br/> {add.state.state_name} ,<br/> {add.pincode}</h>
-                              <IconButton  >
+                              <IconButton style={{float:'right'}} >
                                 <CheckCircleIcon value={add.id}  onClick={this.handleGridCheck.bind(this,add.id)} />
                               </IconButton>
                             </GridListTile>
