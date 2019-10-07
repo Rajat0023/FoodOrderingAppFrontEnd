@@ -32,3 +32,13 @@
 .red{
     color: red;
 }
+
+.icon-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+}
+
+.white{
+    color: white;   
+}

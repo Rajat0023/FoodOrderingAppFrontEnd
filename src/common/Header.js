@@ -17,6 +17,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Snackbar from '@material-ui/core/Snackbar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 const customStyles = {
@@ -39,8 +41,11 @@ const styles = theme => ({
   },
   button: {
     width: '90px',
-    marginTop: '3px'
-  }
+    marginTop: '2px'
+  },
+  menuControl: {
+    marginTop: 5,
+  },
 });
 
 const theme = createMuiTheme({
@@ -103,7 +108,10 @@ class Header extends Component {
       signUpSuccess: false,
       open: false,
       loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
-      loginText: "LOGIN"
+      customerName: "",
+      openMenu: false,
+      dropDownMenu: false,
+      anchorE1: null
     }
   }
 
@@ -178,12 +186,12 @@ class Header extends Component {
     this.setState({ loginPassword: e.target.value })
   }
 
-  loginClickHandler = () => {
+  loginClickHandler = (event) => {
     // Perform check for contact number
     var contactRegex = /^[0-9]{10}$/
     var contact = this.state.contactNumber;
     if (contact.match(contactRegex)) {
-      this.setState({ invalidContact: 'dispNone', message: 'dispNone', loggedIn: false})
+      this.setState({ invalidContact: 'dispNone', message: 'dispNone', loggedIn: false })
     }
     else {
       this.setState({ invalidContact: 'dispBlock' })
@@ -197,7 +205,7 @@ class Header extends Component {
     })
       : this.setState({ contactNumberRequired: 'dispNone' })
 
-    this.state.loginPassword === "" ? this.setState({ loginPasswordRequired: 'dispBlock',  message: 'dispNone', })
+    this.state.loginPassword === "" ? this.setState({ loginPasswordRequired: 'dispBlock', message: 'dispNone', })
       : this.setState({ loginPasswordRequired: 'dispNone' })
 
     if (this.state.contactNumber !== "" && this.state.loginPassword !== "") {
@@ -208,10 +216,11 @@ class Header extends Component {
         if (this.readyState === 4 && this.status === 200) {
           sessionStorage.setItem("uuid", JSON.parse(this.responseText).id);
           sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
-          that.setState({loggedIn: true });
+          that.setState({ loggedIn: true });
           that.setState({ open: true })
-          that.setState({successMessage: "Logged in successfully!" })
-          that.setState({loginText: JSON.parse(this.responseText).first_name})
+          that.setState({ successMessage: "Logged in successfully!" })
+          that.setState({ customerName: JSON.parse(this.responseText).first_name })
+          that.setState({ dropDownMenu: true })
           that.closeModalHandler();
         }
 
@@ -221,7 +230,7 @@ class Header extends Component {
           that.setState({ loggedIn: false })
 
           if (that.state.invalidContact === 'dispNone') {
-          that.setState({ message: 'dispBlock' })
+            that.setState({ message: 'dispBlock' })
           }
         }
       });
@@ -332,7 +341,7 @@ class Header extends Component {
           that.setState({ signUpSuccess: true })
           that.setState({ open: true })
           that.setState({ value: 0 });
-          that.setState({successMessage: "Registered successfully! Please login now!" });
+          that.setState({ successMessage: "Registered successfully! Please login now!" });
         }
         if (this.readyState === 4 && this.status !== 201) {
           console.log(this.responseText);
@@ -340,8 +349,8 @@ class Header extends Component {
           that.setState({ errorMessage: JSON.parse(this.responseText).message })
 
           if (that.state.invalidPassword === 'dispNone' && that.state.invalidSignUpContact === 'dispNone'
-          && that.state.invalidEmail === 'dispNone'){
-          that.setState({ message: 'dispBlock' })
+            && that.state.invalidEmail === 'dispNone') {
+            that.setState({ message: 'dispBlock' })
           }
         }
 
@@ -361,7 +370,27 @@ class Header extends Component {
     this.setState({ open: false })
   };
 
+  closeMenuHandler = () => {
+    this.setState({ openMenu: false })
+    // this.props.history.push('/')
+    
+  }
 
+  logoutHandler = () => {
+    this.setState({ loggedIn: false})
+    this.setState({ openMenu: false })
+    sessionStorage.clear();
+  }
+  
+  openProfileHandler = () => {
+     // this.props.history.push('/')
+     this.setState({ openMenu: false })
+  }
+
+  customerIconClickHandler = event => {
+    this.setState({ openMenu: true })
+    this.setState({ anchorE1: event.currentTarget })
+  }
 
   render() {
     const { classes } = this.props;
@@ -389,16 +418,30 @@ class Header extends Component {
           </ThemeProvider>
         </div>
         <div>
-          <Button
-            variant="contained"
-            color="default"
-            size="medium"
-            className={classes.button}
-            onClick={this.openModalHandler}
-            startIcon={<AccountCircleIcon />}
-          >
-            {this.state.loginText}
-                     </Button>
+          {this.state.loggedIn === false &&
+            <Button
+              variant="contained"
+              color="default"
+              size="medium"
+              className={classes.button}
+              onClick={this.openModalHandler}
+              startIcon={<AccountCircleIcon />}
+            >
+              LOGIN
+            </Button>
+          }
+          {this.state.loggedIn === true &&
+            <div className="icon-container">
+              <AccountCircleIcon
+                onClick={this.customerIconClickHandler}
+                htmlColor="white"
+                fontSize="default"
+                style={{ cursor: 'pointer' }}
+              /> <Typography>
+                <span className="white">{this.state.customerName}</span>
+              </Typography>
+            </div>
+          }
         </div>
         <Modal isOpen={this.state.modalIsOpen} contentLabel='Login Modal' ariaHideApp={false}
           onRequestClose={this.closeModalHandler}
@@ -517,8 +560,21 @@ class Header extends Component {
           }}
           message={<span id="message-id">{this.state.successMessage}</span>}
         />
+        {this.state.dropDownMenu === true &&
+          <Menu className={classes.menuControl}
+            id="simple-menu"
+            open={this.state.openMenu}
+            anchorEl={this.state.anchorE1}
+            onClose={this.closeMenuHandler}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center", marginBottom: '5px' }}
+            transformOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <MenuItem onClick={this.openProfileHandler}>My Profile</MenuItem>
+            <MenuItem onClick={this.logoutHandler}>Logout</MenuItem>
+          </Menu>
 
-
+        }
       </header>
     )
   }
