@@ -235,9 +235,11 @@ this.setState({
 
   //
   handledNextStep = event => {
+    if(this.state.addressUuid!=""){
     this.setState({
       activeStep: this.state.activeStep + 1
     });
+  }
   };
 
   //
@@ -547,7 +549,7 @@ if (this.readyState===4){
 
 
 
-                    {this.state.activeStep === 1 ? (
+                    {this.state.activeStep === 1 && this.state.addressUuid!=""? (
                       <div>
                         <FormControl
                           component="fieldset"
