@@ -29,6 +29,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Select from "@material-ui/core/Select";
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 //injecting below custom props, to one of the properties of component.
 const styles = theme => ({
@@ -71,7 +72,11 @@ const styles = theme => ({
   cardTitle: {
     fontSize: "14px",
     width: "90%"
-  }
+  },
+snackbar: {
+  width:'20%',
+  marginLeft:'15px',
+} 
 
 });
 
@@ -114,6 +119,8 @@ class Checkout extends Component {
       netBillAmount:0,
       discount:0,
       couponId:"",
+      orderId:"",
+      failure:false
 
 
     };
@@ -155,11 +162,24 @@ handlePlaceOrder=event=>{
   
   let xhr4=new XMLHttpRequest();
 let that=this;
-  xhr4.addEventListener("readystatechange",function(){
+
+
+  xhr4.addEventListener("readystatechange",function(){                              //note the callback function
     if (this.readyState===4){
     
      console.log(this.responseText); //parsing string to json object
-     
+     if(JSON.parse(this.responseText).status==="ORDER SUCCESSFULLY PLACED" ){
+that.setState({
+
+  orderId:JSON.parse(this.responseText).id,
+})
+     }
+     else{
+      that.setState({
+        failure:true
+      })  
+     }
+      
     }
         });
         
@@ -223,7 +243,8 @@ this.setState({
   //
   handleFinish = event => {
     this.setState({
-      finishSignal: this.state.finishSignal + 1
+      finishSignal: this.state.finishSignal + 1,
+      activeStep: this.state.activeStep + 1
     });
   };
   //
@@ -455,7 +476,7 @@ if (this.readyState===4){
     const { classes } = this.props;
 
     return (
-      <div>
+      <div style={{height:'720px'}}>
         <header>header component to be reused here</header>
         <br />
 
@@ -465,6 +486,7 @@ if (this.readyState===4){
 
             <Stepper activeStep={this.state.activeStep} orientation="vertical">
               {this.state.tabList.map((label, index) => (
+
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
 
@@ -521,6 +543,10 @@ if (this.readyState===4){
                       </div>
                     ) : null}
 
+
+
+
+
                     {this.state.activeStep === 1 ? (
                       <div>
                         <FormControl
@@ -570,6 +596,9 @@ if (this.readyState===4){
                       </div>
                     ) : null}
 
+
+
+
                     {/* form for new address */}
 
                     {this.state.activeStep === 0 && this.state.value === 1 ? (
@@ -616,13 +645,6 @@ if (this.readyState===4){
                       
 
 
-
-
-
-
-
-
-
                           <Button
                           disabled
                             className={classes.button}
@@ -653,10 +675,10 @@ if (this.readyState===4){
             </Stepper>
 
             {this.state.finishSignal == 1 ? (
-              <Typography>
-                View the summary & place your oder now!
+              <Typography style={{marginLeft:'25px',fontSize:'20px'}}>
+                View the summary & place your order now!
                 <br />
-                <Button onClick={this.handleChangeAfterFinish}>CHANGE</Button>
+                <Button style={{marginLeft:'22px'}} onClick={this.handleChangeAfterFinish}>CHANGE</Button>
               </Typography>
             ) : null}
           </GridListTile>
@@ -697,7 +719,32 @@ if (this.readyState===4){
             </Card>
           </GridListTile>
         </GridList>
+      <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
+      {
+        this.state.orderId!=""?
+        (
+        <footer>
+      <SnackbarContent  className={classes.snackbar} message={<span> Order placed successfully! Your order ID is {this.state.orderId} </span>} />
+    </footer>)
+
+    :
+    (null)
+        }
+
+    {
+ this.state.failure  ?
+        
+
+(
+    <footer>
+      <SnackbarContent  className={classes.snackbar} message='Unable to place your order! Please try again!' />
+    </footer>
+)
+:
+(null)
+      }
       </div>
+      
     );
   }
 }
