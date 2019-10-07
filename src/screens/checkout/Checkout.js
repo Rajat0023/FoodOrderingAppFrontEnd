@@ -648,9 +648,11 @@ if (this.readyState===4){
                           <FormHelperText className={this.state.pinCodeRequired}><span style={{color:"red"}}>required</span></FormHelperText>
                           <FormHelperText className={this.state.pinCodeInvalid}><span style={{color:"red"}}>Pincode must contain only numbers and must be 6 digits long</span></FormHelperText>
                         </FormControl>
-<br/>
+                        <br />
+
                         <FormControl>
-                          <Button variant="contained" color="secondary" style={{width:"80%"}}onClick={this.saveAddressHandler} >SAVE ADDRESS</Button>
+                      
+                          <Button variant="contained" color="secondary" style={{width:"80%",marginTop:'20px'}} onClick={this.saveAddressHandler} >SAVE ADDRESS</Button>
                         </FormControl>
 
                         </form>
