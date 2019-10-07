@@ -20,6 +20,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 
 const customStyles = {
@@ -224,6 +225,7 @@ class Header extends Component {
         if (this.readyState === 4 && this.status === 200) {
           sessionStorage.setItem("uuid", JSON.parse(this.responseText).id);
           sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
+          console.log(sessionStorage);
           that.setState({ loggedIn: true });
           that.setState({ open: true })
           that.setState({ successMessage: "Logged in successfully!" })
@@ -243,7 +245,7 @@ class Header extends Component {
         }
       });
 
-      xhrLogin.open("POST", "http://localhost:8080/api/customer/login");
+      xhrLogin.open("POST",this.props.baseUrl+ "customer/login");
       xhrLogin.setRequestHeader("Authorization", "Basic " + window.btoa(this.state.contactNumber + ":" + this.state.loginPassword));
       xhrLogin.setRequestHeader("Content-Type", "application/json");
       xhrLogin.setRequestHeader("Cache-Control", "no-cache");
@@ -364,7 +366,7 @@ class Header extends Component {
 
       })
 
-      xhrSignUp.open("POST", "http://localhost:8080/api/customer/signup");
+      xhrSignUp.open("POST",this.props.baseUrl+ "customer/signup");
       xhrSignUp.setRequestHeader("Content-Type", "application/json");
       xhrSignUp.setRequestHeader("Cache-Control", "no-cache");
       xhrSignUp.send(dataSignUp);
@@ -404,6 +406,7 @@ class Header extends Component {
     const { classes } = this.props;
 
     return (
+      <div>
       <header className="app-header">
         <div className="logo-container">
           <FastfoodIcon htmlColor="white" fontSize="large" />
@@ -451,6 +454,7 @@ class Header extends Component {
             </div>
           }
         </div>
+        </header>
         <Modal isOpen={this.state.modalIsOpen} contentLabel='Login Modal' ariaHideApp={false}
           onRequestClose={this.closeModalHandler}
           style={customStyles}>
@@ -578,12 +582,12 @@ class Header extends Component {
             anchorOrigin={{ vertical: "bottom", horizontal: "center", marginBottom: '5px' }}
             transformOrigin={{ vertical: "top", horizontal: "center" }}
           >
-            <MenuItem onClick={this.openProfileHandler}>My Profile</MenuItem> <br />
+            <MenuItem onClick={this.openProfileHandler}>My Profile</MenuItem>
             <MenuItem onClick={this.logoutHandler}>Logout</MenuItem>
           </Menu>
 
         }
-      </header>
+      </div>
     )
   }
 }

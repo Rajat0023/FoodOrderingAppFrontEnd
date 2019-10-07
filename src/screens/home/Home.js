@@ -30,7 +30,7 @@ class Home extends Component {
                 });
             }
         })
-        xhrRestaurants.open('GET', this.props.baseUrl +'restaurant');
+        xhrRestaurants.open('GET', this.props.baseUrl + 'restaurant');
         xhrRestaurants.send(dataRestaurants);
         this.updateCardsGridListCols();
     }
@@ -90,7 +90,7 @@ class Home extends Component {
         if (event.target.value === '') {
             xhrRestaurants.open('GET', this.props.baseUrl + 'restaurant');
         } else {
-            xhrRestaurants.open('GET', this.props.baseUrl + 'restaurant/name/'+event.target.value);
+            xhrRestaurants.open('GET', this.props.baseUrl + 'restaurant/name/' + event.target.value);
         }
         xhrRestaurants.send(dataRestaurants);
     }
@@ -99,7 +99,8 @@ class Home extends Component {
         return (
             <div>
                 <Header
-                    showSearchBox={true}
+                    baseUrl={this.props.baseUrl}
+                    showSearch={true}
                     searchHandler={this.searchHandler}
                 />
                 {this.state.restaurants === null ?
@@ -131,13 +132,13 @@ class Home extends Component {
                                             {restaurant.categories}
                                         </Typography>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'row', color:"white", backgroundColor: "#FDD835", padding: 5, justifyContent: 'space-evenly', alignItems: 'center', width: 80 }}>
-                                            <i className="fa fa-star" aria-hidden="true"> </i>
+                                            <div style={{ display: 'flex', flexDirection: 'row', color: "white", backgroundColor: "#FDD835", padding: 5, justifyContent: 'space-evenly', alignItems: 'center', width: 80 }}>
+                                                <i className="fa fa-star" aria-hidden="true"> </i>
                                                 <span className="white">{restaurant.customer_rating}({restaurant.number_customers_rated})</span>
                                             </div>
                                             <div>
-                                            <i className="fa fa-inr" aria-hidden="true"> 
-                                                <span>{restaurant.average_price} for two</span> </i>
+                                                <i className="fa fa-inr" aria-hidden="true">
+                                                    <span>{restaurant.average_price} for two</span> </i>
                                             </div>
                                         </div>
                                     </CardContent>
