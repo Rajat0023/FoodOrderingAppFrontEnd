@@ -19,6 +19,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Snackbar from '@material-ui/core/Snackbar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import PropTypes from 'prop-types';
 
 
 const customStyles = {
@@ -72,12 +73,18 @@ const TabContainer = function (props) {
   );
 }
 
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+  value: PropTypes.any.isRequired,
+  index: PropTypes.any.isRequired,
+}
 
 class Header extends Component {
 
   constructor() {
     super();
     this.state = {
+      dp: "",
       contactNumber: "",
       loginPassword: "",
       firstname: "",
@@ -139,12 +146,12 @@ class Header extends Component {
       xhrSearch.setRequestHeader("Cache-Control", "no-cache");
       xhrSearch.send(data);
     });
-
     console.log(this.state.responseData);
   }
 
   openTabHandler = (event, value) => {
     this.setState({ value })
+    this.setState({ dp: this.state.firstname})
   }
 
   closeModalHandler = () => {
@@ -186,6 +193,7 @@ class Header extends Component {
     this.setState({ loginPassword: e.target.value })
   }
 
+  // The function called when Login button is clicked
   loginClickHandler = (event) => {
     // Perform check for contact number
     var contactRegex = /^[0-9]{10}$/
@@ -263,10 +271,10 @@ class Header extends Component {
     this.setState({ signUpPassword: e.target.value })
   }
 
+  // the function called when signUp button is clicked
   signUpClickHandler = () => {
 
     // Performing check for email
-
     var emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var mail = this.state.email;
     if (mail.match(emailRegex)) {
@@ -383,7 +391,7 @@ class Header extends Component {
   }
   
   openProfileHandler = () => {
-     // this.props.history.push('/')
+     // this.props.history.push('/profile')
      this.setState({ openMenu: false })
   }
 
@@ -570,7 +578,7 @@ class Header extends Component {
             anchorOrigin={{ vertical: "bottom", horizontal: "center", marginBottom: '5px' }}
             transformOrigin={{ vertical: "top", horizontal: "center" }}
           >
-            <MenuItem onClick={this.openProfileHandler}>My Profile</MenuItem>
+            <MenuItem onClick={this.openProfileHandler}>My Profile</MenuItem> <br />
             <MenuItem onClick={this.logoutHandler}>Logout</MenuItem>
           </Menu>
 
