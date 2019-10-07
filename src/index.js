@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import Checkout from './screens/checkout/Checkout';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <div>
+   /*  <div>
         Food Ordering App
-    </div>,
+    </div>, */
+    <Checkout/>,
     document.getElementById('root')
 );
 
