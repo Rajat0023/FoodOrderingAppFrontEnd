@@ -30,17 +30,22 @@ import FormLabel from "@material-ui/core/FormLabel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Select from "@material-ui/core/Select";
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
 
-//injecting below custom props, to one of the properties of component.
+//injecting below custom props, into props of component
 const styles = theme => ({
   root: {
     width: "100%",
     //flexGrow: 1,
-
+   
+  
     backgroundColor: theme.palette.background.paper
   },
   gridList: {
     flexWrap: "nowrap",
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: "column",
+    },
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: "translateZ(0)"
   },
@@ -76,7 +81,7 @@ const styles = theme => ({
 snackbar: {
   width:'20%',
   marginLeft:'15px',
-} 
+} ,
 
 });
 
@@ -129,8 +134,9 @@ class Checkout extends Component {
 
 
   
-  //---------------manage event handlers and other functions here---------------------------------------------------------------
-handleSelectedPaymentMedium=(e)=>{
+  //---------------manage event handlers and other functions here-------------------------------------------------------------
+
+  handleSelectedPaymentMedium=(e)=>{
 this.setState({
   paymentId:e.target.value
 })
@@ -477,14 +483,16 @@ if (this.readyState===4){
 
 
   render() {  
-    const { classes } = this.props;
+    const { classes} = this.props; 
+  
 
     return (
       <div style={{height:'720px'}}>
         <header>header component to be reused here</header>
         <br />
 
-        <GridList className={classes.gridList} cols={2}>
+        <GridList className={classes.gridList} cols={2} >
+
           <GridListTile style={{ width: "70%", height: "100%" }}>
           
 
@@ -687,6 +695,8 @@ if (this.readyState===4){
             ) : null}
           </GridListTile>
 
+
+
           <GridListTile style={{ width: "30%", height: "100%" }}>
             <Card className={classes.cardTitle}>
               <CardContent>
@@ -722,6 +732,7 @@ if (this.readyState===4){
               </CardContent>
             </Card>
           </GridListTile>
+       
         </GridList>
       <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
       {
