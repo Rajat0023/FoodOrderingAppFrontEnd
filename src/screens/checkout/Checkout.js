@@ -89,8 +89,10 @@ class Checkout extends Component {
     //declare and initialize state variables here
     this.state = {
       tabList: ["Delivery", "Payment"],
-      addressIconCounter:0,
+      addressIconCounter: 0,
       paymentMediums:[],
+      paymentId:"",
+      restaurentId:"246165d2-a238-11e8-9077-720006ceb890",
       value: 0,
       activeStep: 0,
       finishSignal: 0,
@@ -107,7 +109,12 @@ class Checkout extends Component {
       addressResponse:[],                 
       states:[],
       stateName:"",
-      stateUuid:""
+      stateUuid:"",
+      addressUuid:"",
+      netBillAmount:0,
+      discount:0,
+      couponId:"",
+
 
     };
   }
@@ -116,22 +123,33 @@ class Checkout extends Component {
 
   
   //---------------manage event handlers and other functions here---------------------------------------------------------------
+handleSelectedPaymentMedium=(e)=>{
+this.setState({
+  paymentId:e.target.value
+})
+
+}
+
+
+
 
 handlePlaceOrder=event=>{
   let requestData=JSON.stringify({
-    "address_id": "string",
-    "bill": 0,
-    "coupon_id": "string",
-    "discount": 0,
+    "address_id": this.state.addressUuid, //retreive from address choosen
+    "bill": 50 ,//this.state.netBillAmount,   //received from details //hardcoded for now
+    "coupon_id": this.state.couponId, //ignore as its optional
+    "discount": this.state.discount, //ignore as its optional
+
+    //below is from, list of items received from  details page //hardcoded for now
     "item_quantities": [
       {
-        "item_id": "string",
-        "price": 0,
-        "quantity": 0
+        "item_id": "c860e78a-a29b-11e8-9a3a-720006ceb890",   //sample hardcoded existing itemid
+        "price": 50,
+        "quantity": 1
       }
     ],
-    "payment_id": "string",
-    "restaurant_id": "string"
+    "payment_id": this.state.paymentId,         //based on payment medium choosen
+    "restaurant_id": this.state.restaurentId      //based on restaturent received from details page //hardcoded for now
   }) 
 
   
@@ -149,7 +167,7 @@ let that=this;
         xhr4.open("POST","http://localhost:8000/api/order");
        xhr4.setRequestHeader("Content-Type","application/json");
       xhr4.setRequestHeader("Cache-Control", "no-cache");
-      xhr4.setRequestHeader("authorization","database_accesstoken2");
+      xhr4.setRequestHeader("authorization","Bearer database_accesstoken2");
       console.log(requestData);
         xhr4.send(requestData);
   
@@ -216,27 +234,50 @@ this.setState({
     });
   };
 
-  handleGridCheck = e => {
-    {
-    this.state.addressIconCounter===0 ?
-    (this.setState({
-      addressIconCounter:(this.state.addressIconCounter + 1)}))
-      :
-(this.setState({
-  addressIconCounter:(this.state.addressIconCounter - 1)}))
+  handleGridCheck =(id,e) => {
+   
+    console.log(this.state.addressIconCounter);
 
-}
 
-console.log(this.state.addressIconCounter);
+    if(this.state.addressIconCounter===0 ){
+      console.log("inside if");
+      this.setState({
+     
+        addressIconCounter:1 
+      },this.handleGreenToggle(e,id)                      //callback function to escape from asynchronous nature of state
+      );
 
-    {
-      this.state.addressIconCounter===0 ?
-   ( e.target.style.color = "green") 
-   :
-   (e.target.style.color="grey")
     }
 
-  };
+    else{
+      console.log("else");
+      this.setState({
+        addressIconCounter:0
+      },this.handleGrayToggle(e)                      //callback function to escape from asynchronous nature of state
+      );
+    }
+
+   
+
+    
+  }
+
+
+  handleGreenToggle = (e,id) => {
+    e.target.style.color = "green";
+this.setState({
+  addressUuid:id
+})
+
+  }
+
+  handleGrayToggle = (e) => {
+    e.target.style.color = "grey";
+    this.setState({
+      addressUuid:""
+    })
+  }
+
 
   saveAddressHandler = event => {
 
@@ -448,12 +489,10 @@ if (this.readyState===4){
                       <div>
                         <GridList className={classes.gridList} cols={3}>
                           {this.state.addressResponse.map(add => (
-                            <GridListTile key={add.id}>
+                            <GridListTile key={add.id}  >
                               <h>{add.flat_building_name} ,<br/> {add.locality} ,<br/> {add.city} ,<br/> {add.state.state_name} ,<br/> {add.pincode}</h>
-                              <IconButton>
-                                <CheckCircleIcon value={add.id}
-                                  onClick={this.handleGridCheck}
-                                />
+                              <IconButton  >
+                                <CheckCircleIcon value={add.id}  onClick={this.handleGridCheck.bind(this,add.id)} />
                               </IconButton>
                             </GridListTile>
                           ))}
@@ -490,20 +529,24 @@ if (this.readyState===4){
                           <FormLabel component="legend">
                             Select mode of Payment
                           </FormLabel>
+
+
                           {
-                            this.state.paymentMediums.map(payment =>(    
+                            this.state.paymentMediums.map(payment =>(  
+
                           <RadioGroup
                             aria-label=""
-                            name="" /* value={value} */ /* onChange={handleChange} */
-                          >
+                            name=""  value={this.state.paymentId}   onChange={this.handleSelectedPaymentMedium}>
                             <FormControlLabel
-                              value={payment.payment_name}
+                              value={payment.id}
                               control={<Radio />}
                               label={payment.payment_name}
                             />                      
                           </RadioGroup>
                             ))
                           }
+
+
                         </FormControl>
 
 
