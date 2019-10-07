@@ -244,10 +244,12 @@ this.setState({
 
   //
   handleFinish = event => {
+    if(this.state.paymentId!=""){
     this.setState({
       finishSignal: this.state.finishSignal + 1,
       activeStep: this.state.activeStep + 1
     });
+  }
   };
   //
   handleChangeAfterFinish = event => {
@@ -549,7 +551,7 @@ if (this.readyState===4){
 
 
 
-                    {this.state.activeStep === 1 && this.state.addressUuid!=""? (
+                    {this.state.activeStep === 1 ? (
                       <div>
                         <FormControl
                           component="fieldset"
