@@ -127,30 +127,10 @@ class Header extends Component {
     this.setState({ dropDownMenu: true })
   }
 
-  searchRestaurantHandler = (e) => {
-
-    this.props.searchHandler(e);
-    // console.log(e.target.value);
-    // this.setState({ restaurantName: e.target.value }, function () {
-
-    //   let data = null;
-    //   let xhrSearch = new XMLHttpRequest();
-    //   let that = this;
-    //   xhrSearch.addEventListener("readystatechange", function () {
-
-    //     if (this.readyState === 4) {
-    //       console.log(JSON.parse(this.responseText)); //convert this string to json object
-    //       that.setState({ responseData: JSON.parse(this.responseText).restaurants })
-    //     }
-
-    //   })
-
-    //   xhrSearch.open("GET", "http://localhost:8080/api/restaurant/name/" + this.state.restaurantName);
-    //   xhrSearch.setRequestHeader("Content-Type", "application/json");
-    //   xhrSearch.setRequestHeader("Cache-Control", "no-cache");
-    //   xhrSearch.send(data);
-    // });
-    // console.log(this.state.responseData);
+  // The searchBox event Handler
+  searchRestaurantHandler = (event) => {
+    console.log(event.target.value);
+    this.props.searchHandler(event);
   }
 
   openTabHandler = (event, value) => {
@@ -424,7 +404,6 @@ class Header extends Component {
                     type='text'
                     placeholder="Search by Restaurant Name"
                     className={classes.SearchField}
-                    value={this.state.restaurantName}
                     onChange={this.searchRestaurantHandler}
                     startAdornment={
                       <InputAdornment position="start">
