@@ -147,19 +147,19 @@ class Checkout extends Component {
 
 
   handlePlaceOrder = event => {
-    
-    let itemList=[];
-    
-        for ( var i=0;i<this.props.location.data.cartItems.length;i++){
-          let itemObject = new Object();
-        itemObject.item_id = this.props.location.data.cartItems[i].item.id
-        itemObject.price = this.props.location.data.cartItems[i].item.price;
-        itemObject.quantity =this.props.location.data.cartItems[i].quantity;
-    
-itemList.push(itemObject);
 
-      }
-    
+    let itemList = [];
+
+    for (var i = 0; i < this.props.location.data.cartItems.length; i++) {
+      let itemObject = new Object();
+      itemObject.item_id = this.props.location.data.cartItems[i].item.id
+      itemObject.price = this.props.location.data.cartItems[i].item.price;
+      itemObject.quantity = this.props.location.data.cartItems[i].quantity;
+
+      itemList.push(itemObject);
+
+    }
+
 
 
     let requestData = JSON.stringify({
@@ -169,8 +169,8 @@ itemList.push(itemObject);
       "discount": this.state.discount, //ignore as its optional
 
       //below is from, list of items received from  details page //hardcoded for now
-      "item_quantities": itemList  
-     ,
+      "item_quantities": itemList
+      ,
       "payment_id": this.state.paymentId,         //based on payment medium choosen
       "restaurant_id": this.props.location.data.restaurantDetails.id      //based on restaturent received from details page //hardcoded for now
     })
@@ -203,7 +203,7 @@ itemList.push(itemObject);
     xhr4.open("POST", this.props.baseUrl + "order");
     xhr4.setRequestHeader("Content-Type", "application/json");
     xhr4.setRequestHeader("Cache-Control", "no-cache");
-    xhr4.setRequestHeader("authorization", "Bearer "+sessionStorage.getItem("access-token"));
+    xhr4.setRequestHeader("authorization", "Bearer " + sessionStorage.getItem("access-token"));
     console.log(requestData);
     xhr4.send(requestData);
 
@@ -396,7 +396,7 @@ itemList.push(itemObject);
       xhr3.open("POST", this.props.baseUrl + "address");
       xhr3.setRequestHeader("Content-Type", "application/json");
       xhr3.setRequestHeader("Cache-Control", "no-cache");
-      xhr3.setRequestHeader("authorization", "Bearer "+sessionStorage.getItem("access-token"));
+      xhr3.setRequestHeader("authorization", "Bearer " + sessionStorage.getItem("access-token"));
       console.log(requestData);
       xhr3.send(requestData);
 
@@ -479,7 +479,7 @@ itemList.push(itemObject);
     //have base url within props and use it as this.props.baseUrl
     xhr.open("GET", this.props.baseUrl + "address/customer");
     xhr.setRequestHeader("Accept", "application/json;charset=UTF-8");
-    xhr.setRequestHeader("authorization", "Bearer "+sessionStorage.getItem("access-token"));
+    xhr.setRequestHeader("authorization", "Bearer " + sessionStorage.getItem("access-token"));
     xhr.setRequestHeader("Cache-Control", "no-cache");
     xhr.send(requestData);
 
@@ -500,7 +500,7 @@ itemList.push(itemObject);
 
     return (
       <div style={{ height: '720px' }}>
-        <Header baseUrl={this.props.baseUrl} showSearch="false"/>
+        <Header baseUrl={this.props.baseUrl} showSearch="false" />
         <br />
 
         <GridList className={classes.gridList} cols={2} >
@@ -718,24 +718,24 @@ itemList.push(itemObject);
                 </Typography>
 
                 <br />
-             
-<Typography style={{ color: "grey" }}>{this.props.location.data.restaurantDetails.restaurant_name}</Typography>
-<br/>
+
+                <Typography style={{ color: "grey" }}>{this.props.location.data.restaurantDetails.restaurant_name}</Typography>
+                <br />
                 {this.props.location.data.cartItems.map(cartItem =>
-                    <div key={cartItem.item.id}>
-                               
-                      <CartItemList item={cartItem}   this={this}/>
-                    </div>
-                  )}
+                  <div key={cartItem.item.id}>
 
-<br />
-                <Divider />
-                             
-
-<div style={{ display: "inline-block", width: "100%", paddingTop: "3%" }}>
-                    <div style={{ float: "left" }}><Typography variant="body1" gutterBottom style={{ fontWeight: 'bold' }}> NET AMOUNT </Typography></div>
-                    <div style={{ float: "right", width: "14%" }}><i className="fa fa-inr" aria-hidden="true"> </i> {this.props.location.data.totalPrice.toFixed(2)} </div>
+                    <CartItemList item={cartItem} this={this} />
                   </div>
+                )}
+
+                <br />
+                <Divider />
+
+
+                <div style={{ display: "inline-block", width: "100%", paddingTop: "3%" }}>
+                  <div style={{ float: "left" }}><Typography variant="body1" gutterBottom style={{ fontWeight: 'bold' }}> NET AMOUNT </Typography></div>
+                  <div style={{ float: "right", width: "14%" }}><i className="fa fa-inr" aria-hidden="true"> </i> {this.props.location.data.totalPrice.toFixed(2)} </div>
+                </div>
 
 
                 <br />
@@ -792,9 +792,9 @@ function CartItemList(props) {
     <div style={{ display: "flex", flexDirection: "row", width: "100%", padding: "1%" }}>
       <div style={{ width: "10%", display: "flex", alignItems: "center", color: color }}><i className="fa fa-stop-circle-o" aria-hidden="true"></i></div>
       <div style={{ width: "40%", display: "flex", alignItems: "center", textTransform: "capitalize" }}><span style={{ color: "grey" }}> {cartItem.item.item_name} </span></div>
-      
-      <div style={{ width: "5%", display: "flex", alignItems: "center" }}> {cartItem.quantity} </div>  
-     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+
+      <div style={{ width: "5%", display: "flex", alignItems: "center" }}> {cartItem.quantity} </div>
+      &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
       <div style={{ display: "flex", alignItems: "center" }}><i className="fa fa-inr" aria-hidden="true"><span style={{ color: "grey" }}> {cartItem.item.price.toFixed(2)} </span></i></div>
     </div>
   )
