@@ -104,7 +104,7 @@ class Home extends Component {
                     searchHandler={this.searchHandler}
                 />
                 {this.state.restaurants === null ?
-                    <Typography className='noRestaurant' variant='h6'>
+                    <Typography className='noRestaurant' variant='h5'>
                         No restaurant with the given name.
                     </Typography>
                     :
