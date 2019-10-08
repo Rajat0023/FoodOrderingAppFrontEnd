@@ -488,14 +488,12 @@ class Checkout extends Component {
 
     return (
       <div style={{ height: '720px' }}>
-        <Header baseUrl={this.props.baseUrl} />
+        <Header baseUrl={this.props.baseUrl} showSearch="false"/>
         <br />
 
         <GridList className={classes.gridList} cols={2} >
 
           <GridListTile style={{ width: "70%", height: "100%" }}>
-
-
             <Stepper activeStep={this.state.activeStep} orientation="vertical">
               {this.state.tabList.map((label, index) => (
 

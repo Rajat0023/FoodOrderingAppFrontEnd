@@ -100,7 +100,7 @@ class Home extends Component {
             <div>
                 <Header
                     baseUrl={this.props.baseUrl}
-                    showSearch={true}
+                    showSearch="true"
                     searchHandler={this.searchHandler}
                 />
                 {this.state.restaurants === null ?
@@ -118,7 +118,7 @@ class Home extends Component {
                                 onClick={() => this.restaurantCardTileOnClickHandler(restaurant.id)}
                                 key={'restaurant' + restaurant.id}
                             >
-                                <Card className='card' style={{ textDecoration: 'none' , cursor: 'pointer'}}>
+                                <Card className='card' style={{ textDecoration: 'none', cursor: 'pointer' }}>
                                     <CardMedia
                                         className='cardMedia'
                                         image={restaurant.photo_URL}

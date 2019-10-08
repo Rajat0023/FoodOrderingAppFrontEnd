@@ -35,6 +35,7 @@ const customStyles = {
   }
 }
 
+// React HOC WithStyles
 const styles = theme => ({
   SearchField: {
     width: '280px',
@@ -112,48 +113,49 @@ class Header extends Component {
       modalIsOpen: false,
       value: 0,
       responseData: [],
-      searchedRestaurants: [],
       restaurantName: "",
       signUpSuccess: false,
       open: false,
       loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
-      customerName: "",
       openMenu: false,
       dropDownMenu: false,
       anchorE1: null
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.setState({ dropDownMenu: true })
   }
 
   searchRestaurantHandler = (e) => {
-    console.log(e.target.value);
-    this.setState({ restaurantName: e.target.value }, function () {
 
-      let data = null;
-      let xhrSearch = new XMLHttpRequest();
-      let that = this;
-      xhrSearch.addEventListener("readystatechange", function () {
+    this.props.searchHandler(e);
+    // console.log(e.target.value);
+    // this.setState({ restaurantName: e.target.value }, function () {
 
-        if (this.readyState === 4) {
-          console.log(JSON.parse(this.responseText)); //convert this string to json object
-          that.setState({ responseData: JSON.parse(this.responseText).restaurants })
-        }
+    //   let data = null;
+    //   let xhrSearch = new XMLHttpRequest();
+    //   let that = this;
+    //   xhrSearch.addEventListener("readystatechange", function () {
 
-      })
+    //     if (this.readyState === 4) {
+    //       console.log(JSON.parse(this.responseText)); //convert this string to json object
+    //       that.setState({ responseData: JSON.parse(this.responseText).restaurants })
+    //     }
 
-      xhrSearch.open("GET", "http://localhost:8080/api/restaurant/name/" + this.state.restaurantName);
-      xhrSearch.setRequestHeader("Content-Type", "application/json");
-      xhrSearch.setRequestHeader("Cache-Control", "no-cache");
-      xhrSearch.send(data);
-    });
-    console.log(this.state.responseData);
+    //   })
+
+    //   xhrSearch.open("GET", "http://localhost:8080/api/restaurant/name/" + this.state.restaurantName);
+    //   xhrSearch.setRequestHeader("Content-Type", "application/json");
+    //   xhrSearch.setRequestHeader("Cache-Control", "no-cache");
+    //   xhrSearch.send(data);
+    // });
+    // console.log(this.state.responseData);
   }
 
   openTabHandler = (event, value) => {
     this.setState({ value })
-    this.setState({ dp: this.state.firstname})
+    this.setState({ dp: this.state.firstname })
   }
 
   closeModalHandler = () => {
@@ -226,11 +228,11 @@ class Header extends Component {
         if (this.readyState === 4 && this.status === 200) {
           sessionStorage.setItem("uuid", JSON.parse(this.responseText).id);
           sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
+          sessionStorage.setItem("name", JSON.parse(this.responseText).first_name);
           console.log(sessionStorage);
           that.setState({ loggedIn: true });
           that.setState({ open: true })
-          that.setState({ successMessage: "Logged in successfully!" })
-          that.setState({ customerName: JSON.parse(this.responseText).first_name })
+          that.setState({ successMessage: "Logged in successfully!" });
           that.setState({ dropDownMenu: true })
           that.closeModalHandler();
         }
@@ -246,7 +248,7 @@ class Header extends Component {
         }
       });
 
-      xhrLogin.open("POST",this.props.baseUrl+ "customer/login");
+      xhrLogin.open("POST", this.props.baseUrl + "customer/login");
       xhrLogin.setRequestHeader("Authorization", "Basic " + window.btoa(this.state.contactNumber + ":" + this.state.loginPassword));
       xhrLogin.setRequestHeader("Content-Type", "application/json");
       xhrLogin.setRequestHeader("Cache-Control", "no-cache");
@@ -367,7 +369,7 @@ class Header extends Component {
 
       })
 
-      xhrSignUp.open("POST",this.props.baseUrl+ "customer/signup");
+      xhrSignUp.open("POST", this.props.baseUrl + "customer/signup");
       xhrSignUp.setRequestHeader("Content-Type", "application/json");
       xhrSignUp.setRequestHeader("Cache-Control", "no-cache");
       xhrSignUp.send(dataSignUp);
@@ -384,18 +386,18 @@ class Header extends Component {
   closeMenuHandler = () => {
     this.setState({ openMenu: false })
     // this.props.history.push('/')
-    
+
   }
 
   logoutHandler = () => {
-    this.setState({ loggedIn: false})
+    this.setState({ loggedIn: false })
     this.setState({ openMenu: false })
     sessionStorage.clear();
   }
-  
+
   openProfileHandler = () => {
-     this.props.history.push('/profile');
-     this.setState({ openMenu: false })
+    this.props.history.push('/profile');
+    this.setState({ openMenu: false })
   }
 
   customerIconClickHandler = event => {
@@ -408,53 +410,58 @@ class Header extends Component {
 
     return (
       <div>
-      <header className="app-header">
-        <div className="logo-container">
-          <FastfoodIcon htmlColor="white" fontSize="large" />
-        </div>
-        <div className="search-box-container">
-          <ThemeProvider theme={theme}>
-            <Input
-              id='search-field'
-              type='text'
-              placeholder="Search by Restaurant Name"
-              className={classes.SearchField}
-              value={this.state.restaurantName}
-              onChange={this.searchRestaurantHandler}
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchIcon htmlColor="white" fontSize="default" />
-                </InputAdornment>
-              }
-            />
-          </ThemeProvider>
-        </div>
-        <div>
-          {this.state.loggedIn === false &&
-            <Button
-              variant="contained"
-              color="default"
-              size="medium"
-              className={classes.button}
-              onClick={this.openModalHandler}
-              startIcon={<AccountCircleIcon />}
-            >
-              LOGIN
+        <header className="app-header">
+          <div className="logo-container">
+            <FastfoodIcon htmlColor="white" fontSize="large" />
+          </div>
+
+          {this.props.showSearch === "true" ?
+            <Link to={"/"}>
+              <div className="search-box-container">
+                <ThemeProvider theme={theme}>
+                  <Input
+                    id='search-field'
+                    type='text'
+                    placeholder="Search by Restaurant Name"
+                    className={classes.SearchField}
+                    value={this.state.restaurantName}
+                    onChange={this.searchRestaurantHandler}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <SearchIcon htmlColor="white" fontSize="default" />
+                      </InputAdornment>
+                    }
+                  />
+                </ThemeProvider>
+              </div>
+            </Link>
+            : ""
+          }
+          <div>
+            {this.state.loggedIn === false ?
+              <Button
+                variant="contained"
+                color="default"
+                size="medium"
+                className={classes.button}
+                onClick={this.openModalHandler}
+                startIcon={<AccountCircleIcon />}
+              >
+                LOGIN
             </Button>
-          }
-          {this.state.loggedIn === true &&
-            <div className="icon-container">
-              <AccountCircleIcon
-                onClick={this.customerIconClickHandler}
-                htmlColor="white"
-                fontSize="default"
-                style={{ cursor: 'pointer' }}
-              /> <Typography>
-                <span className="white">{this.state.customerName}</span>
-              </Typography>
-            </div>
-          }
-        </div>
+              :
+              <div className="icon-container">
+                <AccountCircleIcon
+                  onClick={this.customerIconClickHandler}
+                  htmlColor="white"
+                  fontSize="default"
+                  style={{ cursor: 'pointer' }}
+                /> <Typography>
+                  <span className="white">{sessionStorage.getItem("name")}</span>
+                </Typography>
+              </div>
+            }
+          </div>
         </header>
         <Modal isOpen={this.state.modalIsOpen} contentLabel='Login Modal' ariaHideApp={false}
           onRequestClose={this.closeModalHandler}
@@ -465,6 +472,7 @@ class Header extends Component {
             <Tab label='SIGNUP' />
           </Tabs>
 
+          {/* Modal Part for Login */}
           {this.state.value === 0 &&
             <TabContainer>
               <FormControl required fullWidth='true'>
@@ -497,6 +505,7 @@ class Header extends Component {
             </TabContainer>
           }
 
+          {/* Modal Part for Sign Up */}
           {this.state.value === 1 &&
             <TabContainer>
               <FormControl required fullWidth='true'>
@@ -560,6 +569,7 @@ class Header extends Component {
           }
         </Modal>
 
+        {/* SnackBar Part */}
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
