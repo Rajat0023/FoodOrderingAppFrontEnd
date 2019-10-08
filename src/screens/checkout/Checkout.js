@@ -103,7 +103,6 @@ class Checkout extends Component {
       addressIconCounter: 0,
       paymentMediums: [],
       paymentId: "",
-      restaurentId: "246165d2-a238-11e8-9077-720006ceb890",
       value: 0,
       activeStep: 0,
       finishSignal: 0,
@@ -148,22 +147,32 @@ class Checkout extends Component {
 
 
   handlePlaceOrder = event => {
+    
+    let itemList=[];
+    
+        for ( var i=0;i<this.props.location.data.cartItems.length;i++){
+          let itemObject = new Object();
+        itemObject.item_id = this.props.location.data.cartItems[i].item.id
+        itemObject.price = this.props.location.data.cartItems[i].item.price;
+        itemObject.quantity =this.props.location.data.cartItems[i].quantity;
+    
+itemList.push(itemObject);
+
+      }
+    
+
+
     let requestData = JSON.stringify({
       "address_id": this.state.addressUuid, //retreive from address choosen
-      "bill": 50,//this.state.netBillAmount,   //received from details //hardcoded for now
+      "bill": this.props.location.data.totalPrice.toFixed(2),   //received from details 
       "coupon_id": this.state.couponId, //ignore as its optional
       "discount": this.state.discount, //ignore as its optional
 
       //below is from, list of items received from  details page //hardcoded for now
-      "item_quantities": [
-        {
-          "item_id": "c860e78a-a29b-11e8-9a3a-720006ceb890",   //sample hardcoded existing itemid
-          "price": 50,
-          "quantity": 1
-        }
-      ],
+      "item_quantities": itemList  
+     ,
       "payment_id": this.state.paymentId,         //based on payment medium choosen
-      "restaurant_id": this.state.restaurentId      //based on restaturent received from details page //hardcoded for now
+      "restaurant_id": this.props.location.data.restaurantDetails.id      //based on restaturent received from details page //hardcoded for now
     })
 
 
@@ -477,6 +486,9 @@ class Checkout extends Component {
 
   }
 
+
+
+
   //--------------------------------------------------------------------------------------------------------------------------
 
 
@@ -706,20 +718,25 @@ class Checkout extends Component {
                 </Typography>
 
                 <br />
+             
+<Typography style={{ color: "grey" }}>{this.props.location.data.restaurantDetails.restaurant_name}</Typography>
+<br/>
+                {this.props.location.data.cartItems.map(cartItem =>
+                    <div key={cartItem.item.id}>
+                               
+                      <CartItemList item={cartItem}   this={this}/>
+                    </div>
+                  )}
 
-                <Typography
-                  className={classes.cardTitle}
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  copy paste design of rest from details, and use props on routing
-                </Typography>
-
-                <br />
+<br />
                 <Divider />
-                <br />
+                             
 
-                <Typography>Net Amount : total amount from details</Typography>
+<div style={{ display: "inline-block", width: "100%", paddingTop: "3%" }}>
+                    <div style={{ float: "left" }}><Typography variant="body1" gutterBottom style={{ fontWeight: 'bold' }}> NET AMOUNT </Typography></div>
+                    <div style={{ float: "right", width: "14%" }}><i className="fa fa-inr" aria-hidden="true"> </i> {this.props.location.data.totalPrice.toFixed(2)} </div>
+                  </div>
+
 
                 <br />
                 <Button
@@ -763,4 +780,25 @@ class Checkout extends Component {
     );
   }
 }
+
+//functional component. props received from details page. Then here we take it into constants, and pass to functional component as props,while rendering it.
+
+function CartItemList(props) {
+  const cartItem = props.item;
+  const color = props.item
+    && props.item.item.item_type && props.item.item.item_type.toString()
+    && props.item.item.item_type.toLowerCase() === "non_veg" ? "red" : "green";
+  return (
+    <div style={{ display: "flex", flexDirection: "row", width: "100%", padding: "1%" }}>
+      <div style={{ width: "10%", display: "flex", alignItems: "center", color: color }}><i className="fa fa-stop-circle-o" aria-hidden="true"></i></div>
+      <div style={{ width: "40%", display: "flex", alignItems: "center", textTransform: "capitalize" }}><span style={{ color: "grey" }}> {cartItem.item.item_name} </span></div>
+      
+      <div style={{ width: "5%", display: "flex", alignItems: "center" }}> {cartItem.quantity} </div>  
+     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+      <div style={{ display: "flex", alignItems: "center" }}><i className="fa fa-inr" aria-hidden="true"><span style={{ color: "grey" }}> {cartItem.item.price.toFixed(2)} </span></i></div>
+    </div>
+  )
+}
+
+
 export default withStyles(styles)(Checkout);
