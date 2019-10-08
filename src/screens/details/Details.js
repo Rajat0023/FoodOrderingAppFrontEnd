@@ -175,7 +175,7 @@ class Details extends React.Component {
       <div>
         {/* Header */}
         <div >
-          <Header showSearch={false} />
+          <Header showSearch={false} baseUrl={this.props.baseUrl} />
         </div>
         {/* restaurant information */}
         <div className="restaurant-information">

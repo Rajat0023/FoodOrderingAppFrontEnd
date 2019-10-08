@@ -21,6 +21,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 
 const customStyles = {
@@ -393,7 +394,7 @@ class Header extends Component {
   }
   
   openProfileHandler = () => {
-     // this.props.history.push('/profile')
+     this.props.history.push('/profile');
      this.setState({ openMenu: false })
   }
 
@@ -592,4 +593,4 @@ class Header extends Component {
   }
 }
 
-export default withStyles(styles)(Header);
+export default withRouter(withStyles(styles)(Header));

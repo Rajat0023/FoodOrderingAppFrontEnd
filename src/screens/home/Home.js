@@ -118,7 +118,7 @@ class Home extends Component {
                                 onClick={() => this.restaurantCardTileOnClickHandler(restaurant.id)}
                                 key={'restaurant' + restaurant.id}
                             >
-                                <Card className='card' style={{ textDecoration: 'none' }}>
+                                <Card className='card' style={{ textDecoration: 'none' , cursor: 'pointer'}}>
                                     <CardMedia
                                         className='cardMedia'
                                         image={restaurant.photo_URL}

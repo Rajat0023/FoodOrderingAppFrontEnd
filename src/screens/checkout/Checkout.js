@@ -488,7 +488,7 @@ class Checkout extends Component {
 
     return (
       <div style={{ height: '720px' }}>
-        <Header />
+        <Header baseUrl={this.props.baseUrl} />
         <br />
 
         <GridList className={classes.gridList} cols={2} >
